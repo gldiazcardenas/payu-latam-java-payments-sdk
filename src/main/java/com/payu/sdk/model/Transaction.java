@@ -136,6 +136,10 @@ public class Transaction implements Serializable {
 	/** The Bcash request */
 	@XmlElement
 	private BcashRequest bcashRequest;
+	
+	/** The platform ID */
+	@XmlElement(required = false)
+	private Integer platformId;
 
 	@XmlElement(required = false)
 	private Boolean termsAndConditionsAcepted;
@@ -337,6 +341,16 @@ public class Transaction implements Serializable {
 	public BcashRequest getBcashRequest() {
 
 		return bcashRequest;
+	}
+
+	/**
+	 * Returns the platform ID
+	 * 
+	 * @return the platform ID
+	 */
+	public Integer getPlatformId() {
+
+		return platformId;
 	}
 
 	/**
@@ -621,11 +635,23 @@ public class Transaction implements Serializable {
 	/**
 	 * Sets the Bcash request
 	 *
-	 * @param bcashRequest the Bcash request to set
+	 * @param bcashRequest
+	 *            the Bcash request to set
 	 */
 	public void setBcashRequest(BcashRequest bcashRequest) {
 
 		this.bcashRequest = bcashRequest;
+	}
+
+	/**
+	 * Sets the platform ID
+	 * 
+	 * @param platformId
+	 *            the platform ID
+	 */
+	public void setPlatformId(Integer platformId) {
+
+		this.platformId = platformId;
 	}
 
 	/**
