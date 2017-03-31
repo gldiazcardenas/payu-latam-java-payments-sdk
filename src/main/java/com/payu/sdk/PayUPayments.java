@@ -50,6 +50,7 @@ import com.payu.sdk.payments.model.PaymentRequest;
 import com.payu.sdk.payments.model.PaymentResponse;
 import com.payu.sdk.utils.CommonRequestUtil;
 import com.payu.sdk.utils.PaymentMethodMap;
+import com.payu.sdk.utils.PaymentPlanRequestUtil;
 import com.payu.sdk.utils.RequestUtil;
 
 /**
@@ -479,7 +480,24 @@ public final class PayUPayments extends PayU {
 		return response.getTransactionResponse();
 	}
 
+	/**
+	 * Submit transaction.
+	 *
+	 * @param parameters the parameters map
+	 * @return the transaction response
+	 * @throws PayUException       the pay u exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static boolean sendConfirmationPage(final Map<String, String> parameters)
+			throws PayUException, ConnectionException, InvalidParametersException {
 
+		String[] requiredParams = { PARAMETERS.TRANSACTION_ID };
+		PaymentPlanRequestUtil.validateParameters(parameters, requiredParams);
+
+		String res = HttpClientHelper.sendRequest(
+				RequestUtil.buildConfirmationPageRequest(parameters), RequestMethod.POST);
+		return res.contains("true");
+	}
 
 	/**
 	 * Gets the PaymentMethod value parameter from the parameters map.

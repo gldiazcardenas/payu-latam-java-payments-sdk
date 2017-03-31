@@ -106,7 +106,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 	 * @param parameters the parameters.
 	 * @param request the API request.
 	 */
-	private static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
+	public static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
 
 		request.setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
 		request.setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));

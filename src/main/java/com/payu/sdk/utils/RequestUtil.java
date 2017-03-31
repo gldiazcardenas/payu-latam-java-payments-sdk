@@ -63,6 +63,8 @@ import com.payu.sdk.model.request.Command;
 import com.payu.sdk.model.request.CommandRequest;
 import com.payu.sdk.model.request.Request;
 import com.payu.sdk.model.TransactionIntegrationMethod;
+import com.payu.sdk.paymentplan.model.RecurringBill;
+import com.payu.sdk.payments.model.ConfirmationPageRequest;
 import com.payu.sdk.payments.model.CreditCardTokenListRequest;
 import com.payu.sdk.payments.model.CreditCardTokenRequest;
 import com.payu.sdk.payments.model.PaymentMethodRequest;
@@ -1224,6 +1226,25 @@ public final class RequestUtil extends CommonRequestUtil {
 		bcashRequest.setContentType(contentType);
 		bcashRequest.setContent(content);
 		return bcashRequest;
+	}
+	/**
+	 * Builds a recurring bill request
+	 *
+	 * @param parameters The parameters to be sent to the server
+	 * @return The complete recurring bill request
+	 * @throws InvalidParametersException
+	 */
+	public static Request buildConfirmationPageRequest(
+			Map<String, String> parameters) throws InvalidParametersException {
+
+		// Recurring bill basic parameters
+		String transactionId = getParameter(parameters, PayU.PARAMETERS.TRANSACTION_ID);
+
+		ConfirmationPageRequest request = new ConfirmationPageRequest();
+		PaymentPlanRequestUtil.setAuthenticationCredentials(parameters, request);
+		request.setTransactionId(transactionId);
+
+		return request;
 	}
 
 }
