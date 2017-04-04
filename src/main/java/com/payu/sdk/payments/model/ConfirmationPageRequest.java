@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Represents a notification request in the PayU SDK.
  *
  * @author PayU Latam
- * @version 1.0.0, 28/03/2017
- * @since 1.0.0
+ * @version 1.2.3, 28/03/2017
+ * @since 1.2.3
  */
 @XmlRootElement(name = "request") @XmlAccessorType(XmlAccessType.FIELD)
 public class ConfirmationPageRequest extends CommandRequest {
