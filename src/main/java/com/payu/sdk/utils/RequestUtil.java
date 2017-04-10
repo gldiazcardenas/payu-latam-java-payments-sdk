@@ -57,6 +57,7 @@ import com.payu.sdk.model.Person;
 import com.payu.sdk.model.PersonType;
 import com.payu.sdk.model.RemoveCreditCardToken;
 import com.payu.sdk.model.Transaction;
+import com.payu.sdk.model.TransactionIntegrationMethod;
 import com.payu.sdk.model.TransactionSource;
 import com.payu.sdk.model.TransactionType;
 import com.payu.sdk.model.request.Command;
@@ -914,6 +915,9 @@ public final class RequestUtil extends CommonRequestUtil {
 		if (bcashRequestContentType != null || bcashRequestContent != null) {
 			transaction.setBcashRequest(buildBcashRequest(bcashRequestContentType, bcashRequestContent));
 		}
+		
+		Integer platformId = getIntegerParameter(parameters, PayU.PARAMETERS.PLATFORM_ID);
+		transaction.setPlatformId(platformId);
 
 		if (TransactionType.AUTHORIZATION_AND_CAPTURE.equals(transactionType)
 				|| TransactionType.AUTHORIZATION.equals(transactionType)) {
