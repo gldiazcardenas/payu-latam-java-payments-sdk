@@ -48,6 +48,7 @@ import com.payu.sdk.model.CreditCardTokenInformation;
 import com.payu.sdk.model.Currency;
 import com.payu.sdk.model.DocumentType;
 import com.payu.sdk.model.ExtraParemeterNames;
+import com.payu.sdk.model.Language;
 import com.payu.sdk.model.Merchant;
 import com.payu.sdk.model.Order;
 import com.payu.sdk.model.Payer;
@@ -1245,10 +1246,38 @@ public final class RequestUtil extends CommonRequestUtil {
 		String transactionId = getParameter(parameters, PayU.PARAMETERS.TRANSACTION_ID);
 
 		ConfirmationPageRequest request = new ConfirmationPageRequest();
-		PaymentPlanRequestUtil.setAuthenticationCredentials(parameters, request);
+		setAuthenticationCredentials(parameters, request);
 		request.setTransactionId(transactionId);
 
 		return request;
+	}
+	
+	/**
+	 * Sets the authentication credentials to the API request object.
+	 *
+	 * @param parameters the parameters.
+	 * @param request the API request.
+	 */
+	public static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
+
+		request.setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
+		request.setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));
+
+		String language = getParameter(parameters, PayU.PARAMETERS.LANGUAGE);
+		if (language != null) {
+			request.setLanguage(Language.valueOf(language));
+		}
+		else {
+			request.setLanguage(null);
+		}
+
+		String isTest = getParameter(parameters, PayU.PARAMETERS.IS_TEST);
+		if (isTest != null) {
+			request.setTest(Boolean.getBoolean(getParameter(parameters, PayU.PARAMETERS.IS_TEST)));
+		}
+		else {
+			request.setTest(false);
+		}
 	}
 
 }
