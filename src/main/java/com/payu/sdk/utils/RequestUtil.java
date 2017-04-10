@@ -48,6 +48,7 @@ import com.payu.sdk.model.CreditCardTokenInformation;
 import com.payu.sdk.model.Currency;
 import com.payu.sdk.model.DocumentType;
 import com.payu.sdk.model.ExtraParemeterNames;
+import com.payu.sdk.model.Language;
 import com.payu.sdk.model.Merchant;
 import com.payu.sdk.model.Order;
 import com.payu.sdk.model.Payer;
@@ -63,6 +64,9 @@ import com.payu.sdk.model.TransactionType;
 import com.payu.sdk.model.request.Command;
 import com.payu.sdk.model.request.CommandRequest;
 import com.payu.sdk.model.request.Request;
+import com.payu.sdk.model.TransactionIntegrationMethod;
+import com.payu.sdk.paymentplan.model.RecurringBill;
+import com.payu.sdk.payments.model.ConfirmationPageRequest;
 import com.payu.sdk.payments.model.CreditCardTokenListRequest;
 import com.payu.sdk.payments.model.CreditCardTokenRequest;
 import com.payu.sdk.payments.model.PaymentMethodRequest;
@@ -1227,6 +1231,53 @@ public final class RequestUtil extends CommonRequestUtil {
 		bcashRequest.setContentType(contentType);
 		bcashRequest.setContent(content);
 		return bcashRequest;
+	}
+	/**
+	 * Builds a recurring bill request
+	 *
+	 * @param parameters The parameters to be sent to the server
+	 * @return The complete recurring bill request
+	 * @throws InvalidParametersException
+	 */
+	public static Request buildConfirmationPageRequest(
+			Map<String, String> parameters) throws InvalidParametersException {
+
+		// Recurring bill basic parameters
+		String transactionId = getParameter(parameters, PayU.PARAMETERS.TRANSACTION_ID);
+
+		ConfirmationPageRequest request = new ConfirmationPageRequest();
+		setAuthenticationCredentials(parameters, request);
+		request.setTransactionId(transactionId);
+
+		return request;
+	}
+	
+	/**
+	 * Sets the authentication credentials to the API request object.
+	 *
+	 * @param parameters the parameters.
+	 * @param request the API request.
+	 */
+	public static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
+
+		request.setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
+		request.setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));
+
+		String language = getParameter(parameters, PayU.PARAMETERS.LANGUAGE);
+		if (language != null) {
+			request.setLanguage(Language.valueOf(language));
+		}
+		else {
+			request.setLanguage(null);
+		}
+
+		String isTest = getParameter(parameters, PayU.PARAMETERS.IS_TEST);
+		if (isTest != null) {
+			request.setTest(Boolean.getBoolean(getParameter(parameters, PayU.PARAMETERS.IS_TEST)));
+		}
+		else {
+			request.setTest(false);
+		}
 	}
 
 }

@@ -1,0 +1,6 @@
+2017-03-31
+----------
+* Se agrega método para enviar página de confirmación al comercio
+
+Issue:
+https://pagosonline.jira.com/browse/PAGOSONLINEPPS-37739
