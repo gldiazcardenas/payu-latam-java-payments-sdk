@@ -12,8 +12,8 @@ import com.payu.sdk.model.request.Request;
  * Represents a recurring bill payment retry in the PayU SDK.
  *
  * @author PayU Latam
- * @since 1.2.3
- * @version 1.2.3, 11/05/2017
+ * @since 1.2.4
+ * @version 1.2.4, 11/05/2017
  */
 @XmlRootElement(name = "paymentRetry")
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -36,7 +36,7 @@ public class RecurringBillPaymentRetry extends Request {
 	protected String getBaseRequestUrl(String baseUrl, RequestMethod requestMethod) {
 
 		return String.format(Resources.DEPENDENT_ENTITY_API_URL_PATTERN, baseUrl, Resources.PAYMENT_PLAN_VERSION,
-				Resources.URI_RECURRING_BILL, this.recurringBillId, Resources.URI_RECURRING_BILLL_PAYMENT_RETRY);
+				Resources.URI_RECURRING_BILL, this.recurringBillId, Resources.URI_RECURRING_BILL_PAYMENT_RETRY);
 	}
 
 	public String getRecurringBillId() {

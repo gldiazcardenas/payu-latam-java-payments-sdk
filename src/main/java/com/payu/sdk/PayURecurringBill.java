@@ -97,7 +97,6 @@ public class PayURecurringBill extends PayU {
 	 *
 	 * @param parameters
 	 *            The parameters to be sent to the server
-	 * @return the found recurring bills
 	 * @throws PayUException
 	 * @throws InvalidParametersException
 	 * @throws ConnectionException
