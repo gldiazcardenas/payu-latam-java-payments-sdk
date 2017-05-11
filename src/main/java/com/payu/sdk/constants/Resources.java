@@ -142,6 +142,6 @@ public interface Resources {
 	/**
 	 * Recurring bill payment retry
 	 */
-	String URI_RECURRING_BILLL_PAYMENT_RETRY = "paymentRetry";
+	String URI_RECURRING_BILL_PAYMENT_RETRY = "paymentRetry";
 
 }
