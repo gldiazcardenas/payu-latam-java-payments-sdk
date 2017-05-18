@@ -636,6 +636,37 @@ public class PaymentsApiIntegrationTest {
 		}
 
 	}
+	
+	/**
+	 * Do submit auth and capture transaction.
+	 * 
+	 * @author <a href="mailto:juan.roman@payulatam.com">Juan Roman</a>
+	 * @since 1.5.1
+	 */
+	@Test
+	public void testSendConfirmationPage() {
+		Thread.currentThread().setName("sendConfirmationPageTest");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put(PayU.PARAMETERS.API_KEY, PayU.apiKey);
+		parameters.put(PayU.PARAMETERS.API_LOGIN, PayU.apiLogin);
+		parameters.put(PayU.PARAMETERS.TRANSACTION_ID, "1");
+		
+		try {
+			Boolean response = PayUPayments.sendConfirmationPage(parameters);
+			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
+			Assert.assertNotNull(response, "Invalid response");
+		} catch (ConnectionException e) {
+			// Service Unavailable
+			LoggerUtil.error(e.getMessage(), e);
+			Assert.fail("The conection couldn't be stablished");
+
+		} catch (SDKException e) {
+			// SDK error
+			LoggerUtil.error(e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+	}
 
 	/**
 	 * Do authorization and capture with a specific confirmation page URL

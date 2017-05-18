@@ -23,37 +23,48 @@
  */
 package com.payu.sdk.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
- * Enum representing a transaction type in the PayU SDK.
+ * Enum representing the transaction integration method in the PayU SDK.
  *
  * @author PayU Latam
- * @since 1.0.0
- * @version 1.0.0, 21/08/2013
+ * @since 1.1.20
+ * @version 1.1.20, 23/12/2016
  */
-public enum TransactionType {
+public enum TransactionIntegrationMethod {
 
-	/** Only authorization transaction. */
-	AUTHORIZATION,
+	/**
+     * Standard HTML integration method (payments on PayU web site)
+     */
+    STANDARD_HTML_v4_0,
 
-	/** Authorization and capture transaction. */
-	AUTHORIZATION_AND_CAPTURE,
+    /**
+     * Post API (restful)
+     */
+	POST_API_v4_0,
 
-	/** Only capture transaction. */
-	CAPTURE,
+	/**
+	 * Post bcash API (restful)
+	 */
+	BCASH_API_TX;
 
-	/** Cancel transaction. */
-	CANCELLATION,
+	/**
+	 * Tries to convert the String parameter to a {@link TransactionIntegrationMethod}
+	 *
+	 * @param integrationMethod The string to convert
+	 * @return it's corresponding {@link TransactionIntegrationMethod}
+	 */
+	public static TransactionIntegrationMethod fromString(final String integrationMethod) {
 
-	/** Void transaction. */
-	VOID,
+		if (StringUtils.isNotBlank(integrationMethod)) {
+			for (final TransactionIntegrationMethod method : TransactionIntegrationMethod.values()) {
 
-	/** Refund transaction. */
-	REFUND,
-
-	/** Credit transaction. */
-	CREDIT,
-	
-	/** Partial Refund transaction. */
-	PARTIAL_REFUND
-
+				if (integrationMethod.equalsIgnoreCase(method.toString())) {
+					return method;
+				}
+			}
+		}
+		return null;
+	}	
 }

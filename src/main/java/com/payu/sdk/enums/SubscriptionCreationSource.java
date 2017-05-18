@@ -21,39 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.payu.sdk.model;
+package com.payu.sdk.enums;
 
 /**
- * Enum representing a transaction type in the PayU SDK.
- *
+ * The creation sources for subscriptions
+ * 
  * @author PayU Latam
- * @since 1.0.0
- * @version 1.0.0, 21/08/2013
+ * @since 1.1.9
+ * @version 1.0.0, 25/07/2016
  */
-public enum TransactionType {
+public enum SubscriptionCreationSource {
 
-	/** Only authorization transaction. */
-	AUTHORIZATION,
-
-	/** Authorization and capture transaction. */
-	AUTHORIZATION_AND_CAPTURE,
-
-	/** Only capture transaction. */
-	CAPTURE,
-
-	/** Cancel transaction. */
-	CANCELLATION,
-
-	/** Void transaction. */
-	VOID,
-
-	/** Refund transaction. */
-	REFUND,
-
-	/** Credit transaction. */
-	CREDIT,
-	
-	/** Partial Refund transaction. */
-	PARTIAL_REFUND
-
+	/**
+	 * Creation source for subscriptions created for a migration from POL
+	 */
+	POL_RECURRING_PAYMENT;
 }

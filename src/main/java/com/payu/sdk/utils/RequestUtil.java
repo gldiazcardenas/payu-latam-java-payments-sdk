@@ -26,6 +26,7 @@ package com.payu.sdk.utils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,9 @@ import com.payu.sdk.exceptions.PayUException;
 import com.payu.sdk.exceptions.SDKException.ErrorCode;
 import com.payu.sdk.helper.SignatureHelper;
 import com.payu.sdk.model.Address;
+import com.payu.sdk.model.AddressV4;
 import com.payu.sdk.model.BankListInformation;
+import com.payu.sdk.model.BcashRequest;
 import com.payu.sdk.model.Buyer;
 import com.payu.sdk.model.CreditCard;
 import com.payu.sdk.model.CreditCardToken;
@@ -45,6 +48,7 @@ import com.payu.sdk.model.CreditCardTokenInformation;
 import com.payu.sdk.model.Currency;
 import com.payu.sdk.model.DocumentType;
 import com.payu.sdk.model.ExtraParemeterNames;
+import com.payu.sdk.model.Language;
 import com.payu.sdk.model.Merchant;
 import com.payu.sdk.model.Order;
 import com.payu.sdk.model.Payer;
@@ -54,11 +58,15 @@ import com.payu.sdk.model.Person;
 import com.payu.sdk.model.PersonType;
 import com.payu.sdk.model.RemoveCreditCardToken;
 import com.payu.sdk.model.Transaction;
+import com.payu.sdk.model.TransactionIntegrationMethod;
 import com.payu.sdk.model.TransactionSource;
 import com.payu.sdk.model.TransactionType;
 import com.payu.sdk.model.request.Command;
 import com.payu.sdk.model.request.CommandRequest;
 import com.payu.sdk.model.request.Request;
+import com.payu.sdk.model.TransactionIntegrationMethod;
+import com.payu.sdk.paymentplan.model.RecurringBill;
+import com.payu.sdk.payments.model.ConfirmationPageRequest;
 import com.payu.sdk.payments.model.CreditCardTokenListRequest;
 import com.payu.sdk.payments.model.CreditCardTokenRequest;
 import com.payu.sdk.payments.model.PaymentMethodRequest;
@@ -96,8 +104,22 @@ public final class RequestUtil extends CommonRequestUtil {
 	 */
 	public static PaymentRequest buildPaymentsPingRequest() {
 
+		return buildPaymentsPingRequest(Collections.<String, String>emptyMap());
+
+	}
+	
+	/**
+	 * Builds a payments ping request
+	 *
+	 * @param parameters
+	 *            The parameters to be sent to the server
+	 * @return The complete payments ping request
+	 */
+	public static PaymentRequest buildPaymentsPingRequest(Map<String, String> parameters) {
+
 		PaymentRequest request = buildDefaultPaymentRequest();
 		request.setCommand(Command.PING);
+		setAuthenticationByParameter(parameters, request);
 		return request;
 
 	}
@@ -109,8 +131,20 @@ public final class RequestUtil extends CommonRequestUtil {
 	 */
 	public static ReportingRequest buildReportingPingRequest() {
 
+		return buildReportingPingRequest(Collections.<String, String>emptyMap());
+
+	}
+	
+	/**
+	 * Builds a reporting ping request
+	 *
+	 * @return The complete reporting request to be sent to the server
+	 */
+	public static ReportingRequest buildReportingPingRequest(Map<String, String> parameters) {
+
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.PING);
+		setAuthenticationByParameter(parameters, request);
 		return request;
 
 	}
@@ -150,10 +184,35 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		PaymentRequest request = buildDefaultPaymentRequest();
 		request.setCommand(Command.SUBMIT_TRANSACTION);
-
+		setAuthenticationByParameter(parameters, request);
+		
 		request.setTransaction(buildTransaction(parameters, transactionType));
 
 		return request;
+	}
+
+	/**
+	 * Sets the apiKey and apiLogin into merchant if the values are present 
+	 * into the {@code parameters} and are not present into the constants:
+	 * <ul>
+	 * 	<li>PayU.apiKey</li>
+	 * 	<li>PayU.apiLogin</li>
+	 * </ul>
+	 * 
+	 * @param parameters
+	 * @param request
+	 */
+	private static void setAuthenticationByParameter(Map<String, String> parameters, CommandRequest request) {
+
+		// The PayU.apiKey has priority over the parameters
+		if (request.getMerchant() != null && request.getMerchant().getApiKey() == null) {
+			request.getMerchant().setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));
+		}
+		
+		// The PayU.apiLogin has priority over the parameters
+		if (request.getMerchant() != null && request.getMerchant().getApiLogin() == null) {
+			request.getMerchant().setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
+		}
 	}
 
 	/**
@@ -163,22 +222,51 @@ public final class RequestUtil extends CommonRequestUtil {
 	 */
 	public static Request buildPaymentMethodsListRequest() {
 
+		return buildPaymentMethodsListRequest(Collections.<String, String>emptyMap());
+	}
+	
+	/**
+	 * Builds the payment methods list request.
+	 *
+	 * @param parameters
+	 * 			The parameters to be sent to the server
+	 * @return The complete payment methods list request
+	 */
+	public static Request buildPaymentMethodsListRequest(Map<String, String> parameters) {
+
 		PaymentRequest request = buildDefaultPaymentRequest();
 		request.setCommand(Command.GET_PAYMENT_METHODS);
+		setAuthenticationByParameter(parameters, request);
 
 		return request;
 	}
 
 	/**
 	 * Builds the payment method request
-	 * @return
+	 * 
+	 * @param paymentMethod
+	 * @param apiKey
+	 * @param apiLogin
+	 * @return the payment method request
 	 */
-	public static Request buildPaymentMethodAvailability(String paymentMethod) {
+	public static Request buildPaymentMethodAvailability(String paymentMethod, String apiKey, String apiLogin) {
+		
 		PaymentMethodRequest request = new PaymentMethodRequest();
 		request = (PaymentMethodRequest) buildDefaultRequest(request);
 		request.setTest(PayU.isTest);
 		request.setCommand(Command.GET_PAYMENT_METHOD_AVAILABILITY);
 		request.setPaymentMethod(paymentMethod);
+		
+		// Priority the api key obtained from PayU.apiKey
+		if (request.getMerchant() != null && request.getMerchant().getApiKey() == null) {
+			request.getMerchant().setApiKey(apiKey);
+		}
+		
+		// Priority the api login obtained from PayU.apiLogin
+		if (request.getMerchant() != null && request.getMerchant().getApiLogin() == null) {
+			request.getMerchant().setApiLogin(apiLogin);
+		}
+		
 		return request;
 	}
 
@@ -197,7 +285,8 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.ORDER_DETAIL);
-
+		setAuthenticationByParameter(parameters, request);
+		
 		Integer orderId = getIntegerParameter(parameters,
 				PayU.PARAMETERS.ORDER_ID);
 
@@ -221,6 +310,7 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.ORDER_DETAIL_BY_REFERENCE_CODE);
+		setAuthenticationByParameter(parameters, request);
 
 		request.setDetails(new HashMap<String, Object>(parameters));
 
@@ -239,6 +329,7 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.TRANSACTION_RESPONSE_DETAIL);
+		setAuthenticationByParameter(parameters, request);
 
 		request.setDetails(new HashMap<String, Object>(parameters));
 
@@ -276,6 +367,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		CreditCardTokenRequest request = new CreditCardTokenRequest();
 		request = (CreditCardTokenRequest) buildDefaultRequest(request);
 		request.setCommand(Command.CREATE_TOKEN);
+		setAuthenticationByParameter(parameters, request);
 
 		request.setCreditCardToken(buildCreditCardToken(nameOnCard, payerId,
 				dni, paymentMethod, creditCardNumber, expirationDate));
@@ -311,6 +403,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		CreditCardTokenListRequest request = new CreditCardTokenListRequest();
 		request = (CreditCardTokenListRequest) buildDefaultRequest(request);
 		request.setCommand(Command.GET_TOKENS);
+		setAuthenticationByParameter(parameters, request);
 
 		CreditCardTokenInformation information = new CreditCardTokenInformation();
 
@@ -341,6 +434,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		RemoveCreditCardTokenRequest request = new RemoveCreditCardTokenRequest();
 		request = (RemoveCreditCardTokenRequest) buildDefaultRequest(request);
 		request.setCommand(Command.REMOVE_TOKEN);
+		setAuthenticationByParameter(parameters, request);
 
 		RemoveCreditCardToken remove = new RemoveCreditCardToken();
 
@@ -547,7 +641,7 @@ public final class RequestUtil extends CommonRequestUtil {
 	 *            The parameters map to build the buyer
 	 * @return The buyer built
 	 */
-	private static Buyer buildBuyer(Map<String, String> parameters) {
+	private static Buyer buildBuyer(Map<String, String> parameters) throws InvalidParametersException {
 
 		String buyerId = getParameter(parameters, PayU.PARAMETERS.BUYER_ID);
 		String buyerEmail = getParameter(parameters,
@@ -558,6 +652,8 @@ public final class RequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.BUYER_CONTACT_PHONE);
 		String buyerDniNumber = getParameter(parameters,
 				PayU.PARAMETERS.BUYER_DNI);
+		DocumentType buyerDniType = getEnumValueParameter(DocumentType.class,
+				parameters, PayU.PARAMETERS.BUYER_DNI_TYPE);
 		String buyerCity = getParameter(parameters, PayU.PARAMETERS.BUYER_CITY);
 		String buyerCountry = getParameter(parameters,
 				PayU.PARAMETERS.BUYER_COUNTRY);
@@ -576,9 +672,9 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		Buyer buyer = new Buyer();
 		buildPerson(buyer, buyerId, buyerEmail, buyerName, buyerCNPJ,
-				buyerContactPhone, buyerDniNumber, buyerCity, buyerCountry,
-				buyerPhone, buyerPostalCode, buyerState, buyerStreet,
-				buyerStreet2, buyerStreet3);
+				buyerContactPhone, buyerDniNumber, buyerDniType, buyerCity,
+				buyerCountry, buyerPhone, buyerPostalCode, buyerState,
+				buyerStreet, buyerStreet2, buyerStreet3);
 
 		return buyer;
 	}
@@ -586,58 +682,51 @@ public final class RequestUtil extends CommonRequestUtil {
 	/**
 	 * Builds the payer entity
 	 *
-	 * @param parameters
-	 *            The parameters map to build the payer
+	 * @param parameters The parameters map to build the payer
 	 * @return The payer built
 	 * @throws InvalidParametersException
 	 */
-	private static Payer buildPayer(Map<String, String> parameters)
-			throws InvalidParametersException {
+	private static Payer buildPayer(final Map<String, String> parameters) throws InvalidParametersException {
 
-		String payerId = getParameter(parameters, PayU.PARAMETERS.PAYER_ID);
-		String payerEmail = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_EMAIL);
-		String payerName = getParameter(parameters, PayU.PARAMETERS.PAYER_NAME);
-		String payerCNPJ = getParameter(parameters, PayU.PARAMETERS.PAYER_CNPJ);
-		String payerContactPhone = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_CONTACT_PHONE);
-		String payerDniNumber = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_DNI);
-		String payerCity = getParameter(parameters, PayU.PARAMETERS.PAYER_CITY);
-		String payerCountry = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_COUNTRY);
-		String payerPhone = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_PHONE);
-		String payerPostalCode = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_POSTAL_CODE);
-		String payerState = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_STATE);
-		String payerStreet = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_STREET);
-		String payerStreet2 = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_STREET_2);
-		String payerStreet3 = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_STREET_3);
+		final String payerId = getParameter(parameters, PayU.PARAMETERS.PAYER_ID);
+		final String payerEmail = getParameter(parameters, PayU.PARAMETERS.PAYER_EMAIL);
+		final String payerName = getParameter(parameters, PayU.PARAMETERS.PAYER_NAME);
+		final String payerCNPJ = getParameter(parameters, PayU.PARAMETERS.PAYER_CNPJ);
+		final String payerContactPhone = getParameter(parameters, PayU.PARAMETERS.PAYER_CONTACT_PHONE);
+		final String payerDniNumber = getParameter(parameters, PayU.PARAMETERS.PAYER_DNI);
+		final String payerCity = getParameter(parameters, PayU.PARAMETERS.PAYER_CITY);
+		final String payerCountry = getParameter(parameters, PayU.PARAMETERS.PAYER_COUNTRY);
+		final String payerPhone = getParameter(parameters, PayU.PARAMETERS.PAYER_PHONE);
+		final String payerPostalCode = getParameter(parameters, PayU.PARAMETERS.PAYER_POSTAL_CODE);
+		final String payerState = getParameter(parameters, PayU.PARAMETERS.PAYER_STATE);
+		final String payerStreet = getParameter(parameters, PayU.PARAMETERS.PAYER_STREET);
+		final String payerStreet2 = getParameter(parameters, PayU.PARAMETERS.PAYER_STREET_2);
+		final String payerStreet3 = getParameter(parameters, PayU.PARAMETERS.PAYER_STREET_3);
 
-		String payerBusinessName = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_BUSINESS_NAME);
-		PersonType payerType = getEnumValueParameter(PersonType.class,
-				parameters, PayU.PARAMETERS.PAYER_PERSON_TYPE);
+		final String payerBusinessName = getParameter(parameters, PayU.PARAMETERS.PAYER_BUSINESS_NAME);
+		final PersonType payerType = getEnumValueParameter(PersonType.class, parameters,
+				PayU.PARAMETERS.PAYER_PERSON_TYPE);
+		final String payerBirthdate = getParameter(parameters, PayU.PARAMETERS.PAYER_BIRTH_DATE);
+		final DocumentType payerDniType = getEnumValueParameter(DocumentType.class, parameters,
+				PayU.PARAMETERS.PAYER_DNI_TYPE);
 
-		String payerBirthdate = getParameter(parameters,
-				PayU.PARAMETERS.PAYER_BIRTH_DATE);
-		if (payerBirthdate != null && !payerBirthdate.isEmpty()){
+		if (payerBirthdate != null && !payerBirthdate.isEmpty()) {
+
 			validateDateParameter(payerBirthdate, PayU.PARAMETERS.PAYER_BIRTH_DATE,
 					Constants.DEFAULT_DATE_WITHOUT_HOUR_FORMAT, false);
 		}
-		Payer payer = new Payer();
+
+		final Payer payer = new Payer();
+
 		buildPerson(payer, payerId, payerEmail, payerName, payerCNPJ,
-				payerContactPhone, payerDniNumber, payerCity, payerCountry,
-				payerPhone, payerPostalCode, payerState, payerStreet,
-				payerStreet2, payerStreet3);
+				payerContactPhone, payerDniNumber, payerDniType, payerCity,
+				payerCountry, payerPhone, payerPostalCode, payerState,
+				payerStreet, payerStreet2, payerStreet3);
+
 		payer.setBusinessName(payerBusinessName);
 		payer.setPayerType(payerType);
 		payer.setBirthdate(payerBirthdate);
+
 		return payer;
 	}
 
@@ -658,6 +747,8 @@ public final class RequestUtil extends CommonRequestUtil {
 	 *            The person's contact phone
 	 * @param dniNumber
 	 *            The person's dni number
+	 * @param dniType
+	 *            The person's dni type
 	 * @param city
 	 *            The person's city
 	 * @param country
@@ -677,9 +768,9 @@ public final class RequestUtil extends CommonRequestUtil {
 	 */
 	private static void buildPerson(Person person, String personId,
 			String email, String name, String CNPJ, String contactPhone,
-			String dniNumber, String city, String country, String phone,
-			String postalCode, String state, String street, String street2,
-			String street3) {
+			String dniNumber, DocumentType dniType, String city, String country,
+			String phone, String postalCode, String state, String street,
+			String street2, String street3) {
 
 		person.setMerchantPersonId(personId);
 		person.setEmailAddress(email);
@@ -688,6 +779,7 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		person.setContactPhone(contactPhone);
 		person.setDniNumber(dniNumber);
+		person.setDniType(dniType);
 
 		Address address = new Address();
 		address.setCity(city);
@@ -700,7 +792,6 @@ public final class RequestUtil extends CommonRequestUtil {
 		address.setLine3(street3);
 
 		person.setAddress(address);
-
 	}
 
 	/**
@@ -722,6 +813,10 @@ public final class RequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.ORDER_ID);
 		Integer accountId = getIntegerParameter(parameters,
 				PayU.PARAMETERS.ACCOUNT_ID);
+		String merchantIdParam = getParameter(parameters,
+				PayU.PARAMETERS.MARCHANT_ID);
+		String apiKeyParam = getParameter(parameters,
+				PayU.PARAMETERS.API_KEY);
 
 		String orderReference = getParameter(parameters,
 				PayU.PARAMETERS.REFERENCE_CODE);
@@ -730,6 +825,8 @@ public final class RequestUtil extends CommonRequestUtil {
 		String orderNotifyUrl = getParameter(parameters,
 				PayU.PARAMETERS.NOTIFY_URL);
 
+		String creditCardHolderName = getParameter(parameters,
+				PayU.PARAMETERS.CREDIT_CARD_HOLDER_NAME);
 		String creditCardNumber = getParameter(parameters,
 				PayU.PARAMETERS.CREDIT_CARD_NUMBER);
 		String creditCardExpirationDate = getParameter(parameters,
@@ -788,7 +885,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		String deviceSessionId = getParameter(parameters,
 				PayU.PARAMETERS.DEVICE_SESSION_ID);
 
-		//Response page
+		// Response page
 		String responseUrlPage = getParameter(parameters, PayU.PARAMETERS.RESPONSE_URL);
 
 		String tokenId = getParameter(parameters, PayU.PARAMETERS.TOKEN_ID);
@@ -796,12 +893,32 @@ public final class RequestUtil extends CommonRequestUtil {
 		Transaction transaction = new Transaction();
 		transaction.setType(transactionType);
 
-
-		if(responseUrlPage != null){
-
-			addResponseUrlPage(transaction, responseUrlPage );
+		if (responseUrlPage != null) {
+			addResponseUrlPage(transaction, responseUrlPage);
 		}
 
+		// Shipping address fields
+		String shippingAddressLine1 = getParameter(parameters, PayU.PARAMETERS.SHIPPING_ADDRESS_1);
+		String shippingAddressLine2 = getParameter(parameters, PayU.PARAMETERS.SHIPPING_ADDRESS_2);
+		String shippingAddressLine3 = getParameter(parameters, PayU.PARAMETERS.SHIPPING_ADDRESS_3);
+		String shippingAddressCity = getParameter(parameters, PayU.PARAMETERS.SHIPPING_CITY);
+		String shippingAddressState = getParameter(parameters, PayU.PARAMETERS.SHIPPING_STATE);
+		String shippingAddressCountry = getParameter(parameters, PayU.PARAMETERS.SHIPPING_COUNTRY);
+		String shippingAddressPostalCode = getParameter(parameters, PayU.PARAMETERS.SHIPPING_POSTAL_CODE);
+		String shippingAddressPhone = getParameter(parameters, PayU.PARAMETERS.SHIPPING_PHONE);
+
+		Boolean termsAndConditionsAcepted = getBooleanParameter(parameters,
+				PayU.PARAMETERS.TERMS_AND_CONDITIONS_ACEPTED);
+
+		String bcashRequestContentType = getParameter(parameters, PayU.PARAMETERS.BCASH_REQUEST_CONTENT_TYPE);
+		String bcashRequestContent = getParameter(parameters, PayU.PARAMETERS.BCASH_REQUEST_CONTENT);
+
+		if (bcashRequestContentType != null || bcashRequestContent != null) {
+			transaction.setBcashRequest(buildBcashRequest(bcashRequestContentType, bcashRequestContent));
+		}
+		
+		Integer platformId = getIntegerParameter(parameters, PayU.PARAMETERS.PLATFORM_ID);
+		transaction.setPlatformId(platformId);
 
 		if (TransactionType.AUTHORIZATION_AND_CAPTURE.equals(transactionType)
 				|| TransactionType.AUTHORIZATION.equals(transactionType)) {
@@ -812,7 +929,8 @@ public final class RequestUtil extends CommonRequestUtil {
 
 				String signature = getParameter(parameters,
 						PayU.PARAMETERS.SIGNATURE);
-				String merchantId = PayU.merchantId;
+				String merchantId = PayU.merchantId != null ? PayU.merchantId : merchantIdParam;
+				String apiKey = PayU.apiKey != null ? PayU.apiKey : apiKeyParam;
 
 				Order order = buildOrder(accountId, txCurrency, txValue,
 						taxValue, taxReturnBase, orderDescription,
@@ -820,14 +938,22 @@ public final class RequestUtil extends CommonRequestUtil {
 
 				if (signature == null && merchantId != null) {
 					signature = SignatureHelper.buildSignature(order,
-							Integer.parseInt(merchantId), PayU.apiKey,
+							Integer.parseInt(merchantId), apiKey,
 							SignatureHelper.DECIMAL_FORMAT_3,
 							SignatureHelper.MD5_ALGORITHM);
 				}
 
 				order.setSignature(signature);
-				transaction.setOrder(order);
 
+				// Adds the shipping address
+				AddressV4 shippingAddress = buildShippingAddress(
+						shippingAddressLine1, shippingAddressLine2,
+						shippingAddressLine3, shippingAddressCity,
+						shippingAddressState, shippingAddressCountry,
+						shippingAddressPostalCode, shippingAddressPhone);
+				order.setShippingAddress(shippingAddress);
+
+				transaction.setOrder(order);
 			} else {
 				Order order = new Order();
 				order.setId(orderId);
@@ -851,7 +977,14 @@ public final class RequestUtil extends CommonRequestUtil {
 			transaction.setSource(TransactionSource.PAYU_SDK);
 
 			if (creditCardNumber != null || tokenId != null) {
-				buildCreditCardTransaction(transaction, payerName,
+				
+				// If credit card holder name is null or empty, a payer name
+				// will be send to build a credit card
+				creditCardHolderName = creditCardHolderName != null
+						&& !creditCardHolderName.trim().equals("") ? creditCardHolderName
+						: payerName;
+				
+				buildCreditCardTransaction(transaction, creditCardHolderName,
 						creditCardNumber, creditCardExpirationDate,
 						processWithoutCvv2, securityCode, installments,
 						createCreditCardToken);
@@ -870,11 +1003,17 @@ public final class RequestUtil extends CommonRequestUtil {
 			transaction.setPaymentMethod(paramPaymentMethod);
 			//transaction.setPaymentMethod(paymentMethod);
 			transaction.setPayer(buildPayer(parameters));
+
+			transaction.setTermsAndConditionsAcepted(termsAndConditionsAcepted);
+
+			//Set the integration method of request
+			String paramIntegrationMethod = getParameter(parameters, PayU.PARAMETERS.INTEGRATION_METHOD);
+			transaction.setIntegrationMethod(TransactionIntegrationMethod.fromString(paramIntegrationMethod ));
 			
 			addTransactionExtraParameters(transaction, parameters);
-
 		} else if (TransactionType.VOID.equals(transactionType)
 				|| TransactionType.REFUND.equals(transactionType)
+				|| TransactionType.PARTIAL_REFUND.equals(transactionType)
 				|| TransactionType.CAPTURE.equals(transactionType)) {
 
 			transaction.setParentTransactionId(parentTransactionId);
@@ -895,7 +1034,6 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		return transaction;
 	}
-	
 	/**
 	 * Adds the transaction extra parameters.
 	 *
@@ -920,7 +1058,6 @@ public final class RequestUtil extends CommonRequestUtil {
 		if (extra3 != null) {
 			transaction.addExtraParameter(ExtraParemeterNames.EXTRA3.name(), extra3);
 		}
-		
 	}
 
 	/**
@@ -1034,7 +1171,113 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		transaction.addExtraParameter(ExtraParemeterNames.RESPONSE_URL.name(),
 				responseUrl);
+	}
 
+	/**
+	 * Builds a {@link Address} according to parameters.
+	 *
+	 * @param shippingAddressLine1
+	 *            the address line 1 to set.
+	 * @param shippingAddressLine2
+	 *            the address line 2 to set.
+	 * @param shippingAddressLine3
+	 *            the address line 3 to set.
+	 * @param shippingAddressCity
+	 *            the address city to set.
+	 * @param shippingAddressState
+	 *            the address state to set.
+	 * @param shippingAddressCountry
+	 *            the address country to set.
+	 * @param shippingAddressPostalCode
+	 *            the address postal code to set.
+	 * @param shippingAddressPhone
+	 *            the address phone to set.
+	 * @return {@link Address} object.
+	 */
+	private static AddressV4 buildShippingAddress(String shippingAddressLine1,
+			String shippingAddressLine2, String shippingAddressLine3,
+			String shippingAddressCity, String shippingAddressState,
+			String shippingAddressCountry, String shippingAddressPostalCode,
+			String shippingAddressPhone) {
+
+		AddressV4 shippingAddress = new AddressV4();
+		shippingAddress.setStreet1(shippingAddressLine1);
+		shippingAddress.setStreet2(shippingAddressLine2);
+		shippingAddress.setStreet3(shippingAddressLine3);
+		shippingAddress.setCity(shippingAddressCity);
+		shippingAddress.setState(shippingAddressState);
+		shippingAddress.setCountry(shippingAddressCountry);
+		shippingAddress.setPostalCode(shippingAddressPostalCode);
+		shippingAddress.setPhone(shippingAddressPhone);
+
+		return shippingAddress;
+	}
+
+	/**
+	 * Builds a Bcash request
+	 *
+	 * @param contentType the content type
+	 * @param content     the content
+	 * @return the Bcash request
+	 * @throws InvalidParametersException if any of the arguments is null
+	 */
+	private static BcashRequest buildBcashRequest(String contentType, String content) throws InvalidParametersException {
+
+		if (contentType == null || content == null) {
+			throw new InvalidParametersException("Both the bcashRequestContentType and bcashRequestContent must be set set");
+		}
+
+		BcashRequest bcashRequest = new BcashRequest();
+		bcashRequest.setContentType(contentType);
+		bcashRequest.setContent(content);
+		return bcashRequest;
+	}
+	/**
+	 * Builds a recurring bill request
+	 *
+	 * @param parameters The parameters to be sent to the server
+	 * @return The complete recurring bill request
+	 * @throws InvalidParametersException
+	 */
+	public static Request buildConfirmationPageRequest(
+			Map<String, String> parameters) throws InvalidParametersException {
+
+		// Recurring bill basic parameters
+		String transactionId = getParameter(parameters, PayU.PARAMETERS.TRANSACTION_ID);
+
+		ConfirmationPageRequest request = new ConfirmationPageRequest();
+		setAuthenticationCredentials(parameters, request);
+		request.setTransactionId(transactionId);
+
+		return request;
+	}
+	
+	/**
+	 * Sets the authentication credentials to the API request object.
+	 *
+	 * @param parameters the parameters.
+	 * @param request the API request.
+	 */
+	public static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
+
+		request.setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
+		request.setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));
+
+		String language = getParameter(parameters, PayU.PARAMETERS.LANGUAGE);
+		if (language != null) {
+			request.setLanguage(Language.valueOf(language));
+		}
+		else {
+			request.setLanguage(null);
+		}
+
+		String isTest = getParameter(parameters, PayU.PARAMETERS.IS_TEST);
+		if (isTest != null) {
+			request.setTest(Boolean.getBoolean(getParameter(parameters, PayU.PARAMETERS.IS_TEST)));
+		}
+		else {
+			request.setTest(false);
+		}
 	}
 
 }

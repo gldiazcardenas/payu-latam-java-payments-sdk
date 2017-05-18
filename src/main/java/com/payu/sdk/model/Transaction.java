@@ -58,6 +58,9 @@ public class Transaction implements Serializable {
 	/** The transaction credit card */
 	@XmlElement(required = false)
 	private CreditCard creditCard;
+	/** The transaction debit card */
+	@XmlElement(required = false)
+	private DebitCard debitCard;
 	/** The transaction credit card swipe */
 	@XmlElement(required = false)
 	private CreditCardSwipe creditCardSwipe;
@@ -78,6 +81,9 @@ public class Transaction implements Serializable {
 	@XmlElement(required = false)
 	private String paymentMethod;
 
+	/** The transaction integration method. */
+	@XmlElement(required = false)
+	private TransactionIntegrationMethod integrationMethod;
 	/** The transaction source */
 	@XmlElement(required = false)
 	private TransactionSource source;
@@ -127,6 +133,17 @@ public class Transaction implements Serializable {
 	@XmlElement(required = false)
 	private String reason;
 
+	/** The Bcash request */
+	@XmlElement
+	private BcashRequest bcashRequest;
+	
+	/** The platform ID */
+	@XmlElement(required = false)
+	private Integer platformId;
+
+	@XmlElement(required = false)
+	private Boolean termsAndConditionsAcepted;
+
 	/**
 	 * Returns the transaction order
 	 *
@@ -143,6 +160,15 @@ public class Transaction implements Serializable {
 	 */
 	public CreditCard getCreditCard() {
 		return creditCard;
+	}
+	
+	/**
+	 * Returns the transaction debit card.
+	 *
+	 * @return the debit card
+	 */
+	public DebitCard getDebitCard() {
+		return debitCard;
 	}
 
 	/**
@@ -197,6 +223,15 @@ public class Transaction implements Serializable {
 	 */
 	public String getPaymentMethod() {
 		return paymentMethod;
+	}
+
+	/**
+	 * Gets the transaction integration method.
+	 *
+	 * @return the transaction integration method
+	 */
+	public TransactionIntegrationMethod getIntegrationMethod() {
+		return integrationMethod;
 	}
 
 	/**
@@ -299,6 +334,36 @@ public class Transaction implements Serializable {
 	}
 
 	/**
+	 * Returns the Bcash request
+	 *
+	 * @return the Bcash request
+	 */
+	public BcashRequest getBcashRequest() {
+
+		return bcashRequest;
+	}
+
+	/**
+	 * Returns the platform ID
+	 * 
+	 * @return the platform ID
+	 */
+	public Integer getPlatformId() {
+
+		return platformId;
+	}
+
+	/**
+	 * Return the terms and conditions accepted
+	 *
+	 * @return the terms and conditions accepted
+	 */
+	public Boolean getTermsAndConditionsAcepted() {
+
+		return termsAndConditionsAcepted;
+	}
+
+	/**
 	 * Sets the transaction order
 	 *
 	 * @param order
@@ -318,6 +383,15 @@ public class Transaction implements Serializable {
 		this.creditCard = creditCard;
 	}
 
+	/**
+	 * Sets the transaction debit card.
+	 *
+	 * @param debitCard the new debit card
+	 */
+	public void setDebitCard(DebitCard debitCard) {
+		this.debitCard = debitCard;
+	}
+	
 	/**
 	 * Sets the transaction credit card swipe
 	 *
@@ -378,6 +452,15 @@ public class Transaction implements Serializable {
 		this.paymentMethod = paymentMethod;
 	}
 
+	/**
+	 * Sets the transaction integration method.
+	 *
+	 * @param integrationMethod the new transaction integration method
+	 */
+	public void setIntegrationMethod(TransactionIntegrationMethod integrationMethod) {
+		this.integrationMethod = integrationMethod;
+	}
+	
 	/**
 	 * Sets the transaction source
 	 *
@@ -547,6 +630,39 @@ public class Transaction implements Serializable {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * Sets the Bcash request
+	 *
+	 * @param bcashRequest
+	 *            the Bcash request to set
+	 */
+	public void setBcashRequest(BcashRequest bcashRequest) {
+
+		this.bcashRequest = bcashRequest;
+	}
+
+	/**
+	 * Sets the platform ID
+	 * 
+	 * @param platformId
+	 *            the platform ID
+	 */
+	public void setPlatformId(Integer platformId) {
+
+		this.platformId = platformId;
+	}
+
+	/**
+	 * Sets the terms and conditions accepted
+	 *
+	 * @param termsAndConditionsAcepted
+	 *            the terms and conditions accepted to set
+	 */
+	public void setTermsAndConditionsAcepted(Boolean termsAndConditionsAcepted) {
+
+		this.termsAndConditionsAcepted = termsAndConditionsAcepted;
 	}
 
 }

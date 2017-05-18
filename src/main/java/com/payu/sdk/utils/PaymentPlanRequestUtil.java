@@ -33,12 +33,12 @@ import java.util.Map;
 
 import com.payu.sdk.PayU;
 import com.payu.sdk.constants.Constants;
+import com.payu.sdk.enums.SubscriptionCreationSource;
 import com.payu.sdk.exceptions.InvalidParametersException;
 import com.payu.sdk.exceptions.PayUException;
 import com.payu.sdk.model.AdditionalValue;
 import com.payu.sdk.model.Address;
 import com.payu.sdk.model.Currency;
-import com.payu.sdk.model.Language;
 import com.payu.sdk.model.PaymentMethodType;
 import com.payu.sdk.model.request.Request;
 import com.payu.sdk.paymentplan.model.BankAccount;
@@ -100,34 +100,6 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 	public final static String EMPTY = "";
 	/* Build Methods */
 
-	/**
-	 * Sets the authentication credentials to the API request object.
-	 *
-	 * @param parameters the parameters.
-	 * @param request the API request.
-	 */
-	private static void setAuthenticationCredentials(Map<String, String> parameters, Request request) {
-
-		request.setApiLogin(getParameter(parameters, PayU.PARAMETERS.API_LOGIN));
-		request.setApiKey(getParameter(parameters, PayU.PARAMETERS.API_KEY));
-
-		String language = getParameter(parameters, PayU.PARAMETERS.LANGUAGE);
-		if (language != null) {
-			request.setLanguage(Language.valueOf(language));
-		}
-		else {
-			request.setLanguage(null);
-		}
-
-		String isTest = getParameter(parameters, PayU.PARAMETERS.IS_TEST);
-		if (isTest != null) {
-			request.setTest(Boolean.getBoolean(getParameter(parameters, PayU.PARAMETERS.IS_TEST)));
-		}
-		else {
-			request.setTest(false);
-		}
-	}
-
 	/* PRIVATE METHODS */
 
 	/**
@@ -141,11 +113,13 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 	 *            The tax of the plan
 	 * @param txTaxReturnBase
 	 *            The tax return base of the plan
+	 * @param txAdditionalValue
+	 *            The additional value of the plan
 	 * @return The created list of additional values
 	 */
 	private static List<AdditionalValue> buildPlanAdditionalValues(
 			Currency txCurrency, BigDecimal txValue, BigDecimal txTax,
-			BigDecimal txTaxReturnBase) {
+			BigDecimal txTaxReturnBase, BigDecimal txAdditionalValue) {
 
 		if (txCurrency == null || txValue == null) {
 			return null;
@@ -156,6 +130,8 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		addAdditionalValue(txCurrency, Constants.PLAN_TAX, txTax, values);
 		addAdditionalValue(txCurrency, Constants.PLAN_TAX_RETURN_BASE,
 				txTaxReturnBase, values);
+		addAdditionalValue(txCurrency, Constants.PLAN_ADDITIONAL_VALUE,
+				txAdditionalValue, values);
 
 		return values;
 	}
@@ -237,7 +213,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.CUSTOMER_ID);
 
 		Customer request = new Customer();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setFullName(customerName);
 		request.setEmail(customerEmail);
@@ -271,7 +247,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				parameters.get(PayU.PARAMETERS.OFFSET));
 
 		CustomerListRequest request = new CustomerListRequest();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 		request.setMap(parametersFilter);
 
 		return request;
@@ -322,7 +298,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		address.setPhone(phone);
 
 		PaymentPlanCreditCard request = new PaymentPlanCreditCard();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setToken(tokenId);
 		request.setCustomerId(customerId);
@@ -405,7 +381,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.BANK_ACCOUNT_AGENCY_NUMBER);
 
 		BankAccount request = new BankAccount();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setId(bankAccountId);
 	    request.setAccountId(accountId);
@@ -439,7 +415,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.CUSTOMER_ID);
 
 		BankAccountListRequest request = new BankAccountListRequest();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setCustomerId(customerId);
 
@@ -486,8 +462,11 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		Integer planPaymentMaxPaymentAttemps = getIntegerParameter(parameters,
 				PayU.PARAMETERS.PLAN_MAX_PAYMENT_ATTEMPTS);
 
+		BigDecimal planAdditionalValue = getBigDecimalParameter(parameters,
+				PayU.PARAMETERS.PLAN_ADDITIONAL_VALUE);
+
 		SubscriptionPlan request = new SubscriptionPlan();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setAccountId(accountId);
 		request.setPlanCode(planCode);
@@ -497,7 +476,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		request.setTrialDays(planTrialPeriodDays);
 		request.setMaxPaymentsAllowed(maxPaymentsAllowed);
 		request.setAdditionalValues(buildPlanAdditionalValues(planCurrency,
-				planValue, planTax, planTaxReturnBase));
+				planValue, planTax, planTaxReturnBase, planAdditionalValue));
 		request.setPaymentAttemptsDelay(planPaymentAttemptsDelay);
 		request.setMaxPaymentAttempts(planPaymentMaxPaymentAttemps);
 		request.setMaxPendingPayments(planPaymentMaxPendingPayments);
@@ -519,7 +498,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 
 		SubscriptionPlanListRequest request = new SubscriptionPlanListRequest();
 		request.setMap(parameters);
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		return request;
 	}
@@ -537,7 +516,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 
 		PaymentPlanCreditCard creditCard = buildCreditCardRequest(parameters);
 		Customer request = buildCustomerRequest(parameters);
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.addCreditCard(creditCard);
 
@@ -558,7 +537,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 
 		BankAccount bankAccount = buildBankAccountRequest(parameters);
 		Customer request = buildCustomerRequest(parameters);
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.addBankAccount(bankAccount);
 
@@ -642,10 +621,17 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		// Subscription sourceId and description
 		Long sourceId = getLongParameter(parameters, PayU.PARAMETERS.SOURCE_ID);
 		String description = getParameter(parameters, PayU.PARAMETERS.DESCRIPTION);
+		SubscriptionCreationSource creationSource = getEnumValueParameter(SubscriptionCreationSource.class, parameters,
+				PayU.PARAMETERS.CREATION_SOURCE);
+		
+		// Migrated subscriptions parameters
+		String sourceBuyerIP = getParameter(parameters, PayU.PARAMETERS.SOURCE_BUYER_IP);
+		Integer sourceNumberOfPayments = getIntegerParameter(parameters, PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS); 
+		Integer sourceNextPaymentNumber = getIntegerParameter(parameters, PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER);
 		
 		// Subscription basic parameters
 		Subscription request = new Subscription();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setTrialDays(trialDays);
 		request.setImmediatePayment(immediatePayment);
@@ -657,9 +643,16 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		request.setNotifyUrl(notifyUrl);
 		request.setSourceReference(sourceReference);
 		request.setExtra1(extra1);
-		request.setExtra1(extra2);
+		request.setExtra2(extra2);
 		request.setSourceId(sourceId);
 		request.setDescription(description);
+		request.setSourceBuyerIp(sourceBuyerIP);
+		request.setSourceNumberOfPayments(sourceNumberOfPayments);
+		request.setSourceNextPaymentNumber(sourceNextPaymentNumber);
+		
+		if (creationSource != null) {
+			request.setCreationSource(creationSource.name());
+		}
 
 		// Subscription complex parameters (customer and plan)
 		request.setPlan(plan);
@@ -729,7 +722,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		deliveryAddress.setPostalCode(getParameter(parameters,PayU.PARAMETERS.DELIVERY_POSTAL_CODE));
 		deliveryAddress.setPhone(getParameter(parameters,PayU.PARAMETERS.DELIVERY_PHONE));
 		
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setUrlId(subscriptionId);
 		request.setCreditCardToken(newCreditCardToken);
@@ -778,7 +771,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 
 		// Subscription basic parameters
 		RecurringBillItem request = new RecurringBillItem();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		request.setId(recurringBillItemId);
 		request.setDescription(description);
@@ -812,7 +805,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		parametersRequest.put(PayU.PARAMETERS.SUBSCRIPTION_ID, subscriptionId);
 		parametersRequest.put(PayU.PARAMETERS.DESCRIPTION, description);
 		RecurringBillItemListRequest request = new RecurringBillItemListRequest();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 		request.setMap(parametersRequest);
 
 		return request;
@@ -832,7 +825,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		String recurringBillId = getParameter(parameters, PayU.PARAMETERS.RECURRING_BILL_ID);
 
 		RecurringBill request = new RecurringBill();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 		request.setId(recurringBillId);
 
 		return request;
@@ -862,7 +855,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				endDate, PayU.PARAMETERS.RECURRING_BILL_DATE_FINAL, Constants.DEFAULT_DATE_WITHOUT_HOUR_FORMAT);
 
 		RecurringBillListRequest request = new RecurringBillListRequest();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 		request.setMap(parameters);
 
 		return request;
@@ -899,6 +892,8 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 				PayU.PARAMETERS.LIMIT);
 		String offset=getParameter(parameters,
 				PayU.PARAMETERS.OFFSET);
+		String sourceId = getParameter(parameters, 
+				PayU.PARAMETERS.SOURCE_ID);
 
 		Map<String, String> paramsFilter=new HashMap<String, String>();
 		paramsFilter.put(PayU.PARAMETERS.CUSTOMER_ID, customerId);
@@ -909,11 +904,12 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		paramsFilter.put(PayU.PARAMETERS.ACCOUNT_ID, accountId);
 		paramsFilter.put(PayU.PARAMETERS.LIMIT, limit);
 		paramsFilter.put(PayU.PARAMETERS.OFFSET, offset);
+		paramsFilter.put(PayU.PARAMETERS.SOURCE_ID, sourceId);
 
 		SubscriptionsListRequest request = new SubscriptionsListRequest();
 
 		request.setMap(paramsFilter);
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 
 		return request;
 	}

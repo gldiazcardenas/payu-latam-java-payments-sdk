@@ -50,6 +50,7 @@ import com.payu.sdk.payments.model.PaymentRequest;
 import com.payu.sdk.payments.model.PaymentResponse;
 import com.payu.sdk.utils.CommonRequestUtil;
 import com.payu.sdk.utils.PaymentMethodMap;
+import com.payu.sdk.utils.PaymentPlanRequestUtil;
 import com.payu.sdk.utils.RequestUtil;
 
 /**
@@ -60,6 +61,9 @@ import com.payu.sdk.utils.RequestUtil;
  * @version 1.0.0, 21/08/2013
  */
 public final class PayUPayments extends PayU {
+	
+	/** Payment method CODENSA */
+	private final static String PAYMENT_METHOD_CODENSA = "CODENSA";
 
 	/**
 	 * Private constructor
@@ -104,20 +108,64 @@ public final class PayUPayments extends PayU {
 	}
 
 	/**
-	 * Get payment method Availability
+	 * Get payment method availability
 	 *
-	 * @return The payment method list
+	 * @param paymentMethod
+	 * @return the payment method list
 	 * @throws PayUException
 	 * @throws ConnectionException
 	 */
 	public static PaymentMethodApi getPaymentMethodAvailability(String paymentMethod)
 			throws PayUException, ConnectionException {
-		//find the PaymentMethod object in the map
+		
+		// The api key and api login are not needed
+		return getPaymentMethodAvailabilityLogic(paymentMethod, null, null);
+	}
+	
+	/**
+	 * Get payment method availability
+	 * 
+	 * @param paymentMethod
+	 * @param apiKey
+	 * @param apiLogin
+	 * @return the payment method
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 */
+	public static PaymentMethodApi getPaymentMethodAvailability(String paymentMethod, String apiKey, String apiLogin)
+			throws PayUException, ConnectionException {
+		
+		return getPaymentMethodAvailabilityLogic(paymentMethod, apiKey, apiLogin);
+	}
+	
+	/**
+	 * Contains the bussiness logic for
+	 * {@link PayUPayments#getPaymentMethodAvailability(String)} and
+	 * {@link PayUPayments#getPaymentMethodAvailability(String,String,String)}
+	 * 
+	 * @param paymentMethod
+	 * @param apiKey
+	 * @param apiLogin
+	 * @return the payment method
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 */
+	private static PaymentMethodApi getPaymentMethodAvailabilityLogic(String paymentMethod, String apiKey, String apiLogin)
+			throws PayUException, ConnectionException {
+		
+		// Finds the PaymentMethod object in the map
 		PaymentMethodApi paymentMethodApi = PaymentMethodMap.getInstance().getPaymentMethod(paymentMethod);
-		if (paymentMethodApi == null){
-			//Makes a get payment method Availability request in the API
-			paymentMethodApi = getPaymentMethodAvailabilityFromAPI(paymentMethod);
-			//if obtains the paymentMethod object, adds this to the map
+		if (paymentMethodApi == null) {
+			
+			if (apiKey != null && !apiKey.trim().equals("") && apiLogin != null && !apiLogin.trim().equals("")) {
+				// Makes a get payment method availability request in the API using api key and api login sent by user as parameters
+				paymentMethodApi = getPaymentMethodAvailabilityFromAPI(paymentMethod, apiKey, apiLogin);
+			} else {
+				// Makes a get payment method Availability request in the API
+				paymentMethodApi = getPaymentMethodAvailabilityFromAPI(paymentMethod);
+			}
+			
+			// If obtains the paymentMethod object, adds this to the map
 			if (paymentMethodApi != null){
 				PaymentMethodMap.getInstance().putPaymentMethod(paymentMethodApi);
 			}
@@ -126,7 +174,8 @@ public final class PayUPayments extends PayU {
 	}
 
 	/**
-	 * Makes a get payment method Availability request
+	 * Makes a get payment method availability request
+	 * 
 	 * @param paymentMethod
 	 * @return
 	 * @throws PayUException
@@ -134,8 +183,44 @@ public final class PayUPayments extends PayU {
 	 */
 	protected static PaymentMethodApi getPaymentMethodAvailabilityFromAPI(String paymentMethod)
 			throws PayUException, ConnectionException {
+
+		// The api key and api login are not needed
+		return getPaymentMethodAvailabilityFromAPILogic(paymentMethod, null, null);
+	}
+	
+	/**
+	 * Makes a get payment method availability request
+	 * 
+	 * @param paymentMethod
+	 * @param apiKey
+	 * @param apiLogin
+	 * @return
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 */
+	protected static PaymentMethodApi getPaymentMethodAvailabilityFromAPI(String paymentMethod, String apiKey, String apiLogin)
+			throws PayUException, ConnectionException {
+
+		return getPaymentMethodAvailabilityFromAPILogic(paymentMethod, apiKey, apiLogin);
+	}
+	
+	/**
+	 * Contains the bussiness logic for
+	 * {@link PayUPayments#getPaymentMethodAvailabilityFromAPI(String)} and
+	 * {@link PayUPayments#getPaymentMethodAvailabilityFromAPI(String,String,String)}.
+	 * 
+	 * @param paymentMethod
+	 * @param apiKey
+	 * @param apiLogin
+	 * @return
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 */
+	protected static PaymentMethodApi getPaymentMethodAvailabilityFromAPILogic(String paymentMethod, String apiKey, String apiLogin)
+			throws PayUException, ConnectionException {
+		
 		String res = HttpClientHelper.sendRequest(
-				RequestUtil.buildPaymentMethodAvailability(paymentMethod),
+				RequestUtil.buildPaymentMethodAvailability(paymentMethod, apiKey, apiLogin),
 				RequestMethod.POST);
 
 		PaymentMethodResponse response = PaymentMethodResponse.fromXml(res);
@@ -278,6 +363,23 @@ public final class PayUPayments extends PayU {
 	}
 
 	/**
+	 * Do a partial refund transaction
+	 *
+	 * @param parameters
+	 *            The parameters to be sent to the server
+	 * @return The transaction response to the request sent
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 * @throws InvalidParametersException
+	 */
+	public static TransactionResponse doPartialRefund(Map<String, String> parameters)
+			throws PayUException, InvalidParametersException,
+			ConnectionException {
+
+		return processTransaction(parameters, TransactionType.PARTIAL_REFUND);
+	}
+	
+	/**
 	 * Makes payment petition
 	 *
 	 * @param parameters
@@ -378,7 +480,24 @@ public final class PayUPayments extends PayU {
 		return response.getTransactionResponse();
 	}
 
+	/**
+	 * Submit transaction.
+	 *
+	 * @param parameters the parameters map
+	 * @return the transaction response
+	 * @throws PayUException       the pay u exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static boolean sendConfirmationPage(final Map<String, String> parameters)
+			throws PayUException, ConnectionException, InvalidParametersException {
 
+		String[] requiredParams = { PARAMETERS.TRANSACTION_ID };
+		PaymentPlanRequestUtil.validateParameters(parameters, requiredParams);
+
+		String res = HttpClientHelper.sendRequest(
+				RequestUtil.buildConfirmationPageRequest(parameters), RequestMethod.POST);
+		return res.contains("true");
+	}
 
 	/**
 	 * Gets the PaymentMethod value parameter from the parameters map.
@@ -391,9 +510,18 @@ public final class PayUPayments extends PayU {
 			throws PayUException, InvalidParametersException, ConnectionException{
 		PaymentMethodApi paymentMethod = null;
 		String parameter = CommonRequestUtil.getParameter(parameters, paramName);
-		if (parameter != null){
-			//find the PaymentMethod object in the map
-			paymentMethod = getPaymentMethodAvailability(parameter);
+		if (parameter != null) {
+			
+			String apiKey = RequestUtil.getParameter(parameters, PayU.PARAMETERS.API_KEY);
+			String apiLogin = RequestUtil.getParameter(parameters, PayU.PARAMETERS.API_LOGIN);
+			
+			if (apiKey != null && !apiKey.trim().equals("") && apiLogin != null && !apiLogin.trim().equals("")) {
+				// Finds the payment method using api key and api login sent by user as parameters
+				paymentMethod = getPaymentMethodAvailability(parameter, apiKey, apiLogin);
+			} else {
+				// Find the PaymentMethod object in the map
+				paymentMethod = getPaymentMethodAvailability(parameter);
+			}
 		}
 		return paymentMethod;
 	}
@@ -440,7 +568,11 @@ public final class PayUPayments extends PayU {
 				requiredParameters.add(PayU.PARAMETERS.PAYER_STATE);
 				requiredParameters.add(PayU.PARAMETERS.PAYER_POSTAL_CODE);
 
-			}
+			}else if (PAYMENT_METHOD_CODENSA.equals(paymentMethod.getName())) {
+				
+				requiredParameters.add(PayU.PARAMETERS.PAYER_DNI_TYPE);
+				requiredParameters.add(PayU.PARAMETERS.PAYER_DNI);
+		   }
 			else if (paymentMethod.getType() != null){
 				switch (paymentMethod.getType()) {
 				case CASH:

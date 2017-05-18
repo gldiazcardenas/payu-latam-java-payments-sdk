@@ -111,4 +111,29 @@ public interface Constants {
 	 * The item tax return base variable
 	 */
 	String ITEM_TAX_RETURN_BASE = "ITEM_TAX_RETURN_BASE";
+
+	/**
+	 * The plan additional value variable
+	 */
+	String PLAN_ADDITIONAL_VALUE = "PLAN_ADDITIONAL_VALUE";
+	
+	/** MD5 Algorithm */
+	String ALGORITHM_MD5 = "md5";
+
+	/** SHA1 algorithm */
+	String ALGORITHM_SHA = "sha";
+
+	/** SHA-256 algorithm */
+	String ALGORITHM_SHA_256 = "sha256";	
+	
+	/** The production environment prefix URL*/
+	String PAYMENTS_PRD_URL = "https://api.payulatam.com";
+	
+	/** The STG environment prefix URL*/
+	String PAYMENTS_STG_URL = "https://stg.api.payulatam.com";
+	
+	/** The STG environment prefix URL*/
+	String PAYMENTS_SANDBOX_URL = "https://sandbox.api.payulatam";	
+
+
 }

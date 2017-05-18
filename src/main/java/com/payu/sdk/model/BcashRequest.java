@@ -23,29 +23,68 @@
  */
 package com.payu.sdk.model;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
- * Represents a credit card in the PayU SDK.
+ * Represents a Bcash request in the PayU SDK
  *
- * @author PayU Latam
- * @since 1.0.0
- * @version 1.0.0, 06/09/2013
+ * @author <a href="mailto:he.alarcon@transportsystems.co">Hernán Alarcón</a>
+ * @version 1.1.12, 21/10/2016
+ * @since 1.1.12
  */
-@XmlRootElement(name="creditCard")
+@XmlRootElement(name = "bcashRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreditCard extends AbstractCardData implements Serializable {
+public class BcashRequest implements Serializable {
 
-	/** The generated serial version Id */
-	private static final long serialVersionUID = 8390294592569483576L;
+	/** The content type */
+	@XmlElement(required = true)
+	private String contentType;
+	/** The content */
+	@XmlElement(required = true)
+	private String content;
 
-	@Override
-	public CardType getCardType() {
-		return CardType.CREDIT;
+	/**
+	 * Returns the content type
+	 *
+	 * @return the content type
+	 */
+	public String getContentType() {
+
+		return contentType;
 	}
-	
+
+	/**
+	 * Returns the content
+	 *
+	 * @return the content
+	 */
+	public String getContent() {
+
+		return content;
+	}
+
+	/**
+	 * Sets the content type
+	 *
+	 * @param contentType the content type to set
+	 */
+	public void setContentType(String contentType) {
+
+		this.contentType = contentType;
+	}
+
+	/**
+	 * Sets the content
+	 *
+	 * @param content the content to set
+	 */
+	public void setContent(String content) {
+
+		this.content = content;
+	}
+
 }

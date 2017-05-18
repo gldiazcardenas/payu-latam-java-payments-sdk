@@ -125,6 +125,11 @@ public interface Resources {
 	String URI_RECURRING_BILL = "recurringBill";
 
 	/**
+	 * send Confirmation page URI
+	 */
+	String URI_SEND_CONFIRMATION_PAGE = "sendConfirmationPage";
+
+	/**
 	 * Customers item URI
 	 */
 	String URI_CUSTOMERS = "customers";

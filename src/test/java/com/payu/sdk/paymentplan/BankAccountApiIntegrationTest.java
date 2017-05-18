@@ -113,6 +113,11 @@ public class BankAccountApiIntegrationTest {
 	 * The bank account identifier
 	 */
 	private String bankAccountBrazilId;
+	
+	/**
+	 * The subscriptions created
+	 */
+	private List<Subscription> subscriptionsCreated = new ArrayList<Subscription>();
 
 	@BeforeClass
 	private void init() {
@@ -404,6 +409,8 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.PLAN_MAX_PAYMENT_ATTEMPTS, "0");
 		parameters.put(PayU.PARAMETERS.PLAN_MAX_PENDING_PAYMENTS, "2");
 
+		parameters.put(PayU.PARAMETERS.PLAN_ADDITIONAL_VALUE, "5000");
+
 		try {
 			SubscriptionPlan response = PayUPlans.create(parameters);
 
@@ -460,6 +467,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -472,6 +483,7 @@ public class BankAccountApiIntegrationTest {
 
 		try {
 			Subscription response = PayUSubscription.create(parameters);
+			subscriptionsCreated.add(response);
 			subscriptionIds.add(response.getId());
 			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
 
@@ -522,6 +534,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 		
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_NAME, "David");
@@ -597,6 +613,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -753,6 +773,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -819,6 +843,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_NAME, "David");
@@ -908,6 +936,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_NAME, "David");
@@ -918,7 +950,8 @@ public class BankAccountApiIntegrationTest {
 
 		try {
 			Subscription response = PayUSubscription.create(parameters);
-
+			subscriptionsCreated.add(response);
+			
 			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
 
 		} catch (ConnectionException e) {
@@ -969,6 +1002,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -995,6 +1032,7 @@ public class BankAccountApiIntegrationTest {
 			Subscription response = PayUSubscription.create(parameters);
 			subscriptionIds.add(response.getId());
 			planCodes.add(response.getPlan().getPlanCode());
+			subscriptionsCreated.add(response);
 			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
 
 			Assert.assertNotNull(response, "Empty subscription response");
@@ -1045,6 +1083,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 		
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -1116,6 +1158,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Plan parameters
 		parameters.put(PayU.PARAMETERS.PLAN_ID, planId);
@@ -1133,6 +1179,8 @@ public class BankAccountApiIntegrationTest {
 
 		try {
 			Subscription response = PayUSubscription.create(parameters);
+			subscriptionsCreated.add(response);
+			
 			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
 			Assert.fail("is valid?");
 
@@ -1182,12 +1230,16 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// Plan parameters
 		parameters.put(PayU.PARAMETERS.PLAN_ID, planId);
 
 		// customer parameters
-				parameters.put(PayU.PARAMETERS.CUSTOMER_NAME, "david");
+		parameters.put(PayU.PARAMETERS.CUSTOMER_NAME, "david");
 
 		// Bank account parameters
 		parameters.put(PayU.PARAMETERS.BANK_ACCOUNT_CUSTOMER_NAME, "David");
@@ -1207,6 +1259,7 @@ public class BankAccountApiIntegrationTest {
 			Assert.assertNotNull(response.getCustomer(),"Null customer response");
 			Assert.assertNotNull(response.getCustomer().getId(),"Null customer identifier response");
 			customerIds.add(response.getCustomer().getId());
+			subscriptionsCreated.add(response);
 		} catch (ConnectionException e) {
 
 			// Service Unavailable
@@ -1254,6 +1307,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 
 		// plan parameters
 		parameters.put(PayU.PARAMETERS.PLAN_DESCRIPTION, "Basic Plan");
@@ -1332,6 +1389,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 		
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -1500,6 +1561,10 @@ public class BankAccountApiIntegrationTest {
 		parameters.put(PayU.PARAMETERS.DELIVERY_PHONE, "777123123");
 		parameters.put(PayU.PARAMETERS.SOURCE_ID, "12345");
 		parameters.put(PayU.PARAMETERS.DESCRIPTION, "Test description");
+		parameters.put(PayU.PARAMETERS.SOURCE_BUYER_IP, "123.321.123.321");
+		parameters.put(PayU.PARAMETERS.SOURCE_NUMBER_OF_PAYMENTS, "6");
+		parameters.put(PayU.PARAMETERS.SOURCE_NEXT_PAYMENT_NUMBER, "7");
+		parameters.put(PayU.PARAMETERS.CREATION_SOURCE, "POL_RECURRING_PAYMENT");
 		
 		// Customer parameters
 		parameters.put(PayU.PARAMETERS.CUSTOMER_ID, customer.getId());
@@ -1508,9 +1573,9 @@ public class BankAccountApiIntegrationTest {
 		// Bank account parameters
 		parameters.put(PayU.PARAMETERS.BANK_ACCOUNT_ID, bankAccountId);
 
-
 		try {
 			Subscription response = PayUSubscription.create(parameters);
+			subscriptionsCreated.add(response);
 
 			LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
 
@@ -1836,7 +1901,72 @@ public class BankAccountApiIntegrationTest {
 			Assert.fail(e.getMessage());
 		}
 	}
+	
+	@Test(dependsOnMethods = { 
+			"createSubscriptionExistingPlanAndBankAccountExisting", 
+			"createSubscriptionWithoutPaymentMethod",
+			"createSubscriptionNewPlanAndExistingBankAccount", 
+			"createSubscriptionWithoutCustomer",
+			"createSubscriptionWithoutCustomer2", 
+			"createSubscriptionWithoutTermAndConditions" })
+	public void findSubscriptionsBySourceId() {
 
+		Thread.currentThread().setName("findSubscriptionsBySourceId");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put(PayU.PARAMETERS.SOURCE_ID, subscriptionsCreated.get(0).getSourceId().toString());
+
+		try {
+			List<Subscription> subscriptions = PayUSubscription.findList(parameters);
+			LoggerUtil.info(RESPONSE_LOG_MESSAGE, subscriptions);
+
+			Assert.assertNotNull(subscriptions);
+			for (Subscription sus : subscriptions) {
+				Assert.assertNotNull(sus);
+			}
+			
+			Assert.assertTrue(subscriptionsCreated.size() == subscriptions.size());
+		}
+		catch (ConnectionException e) {
+
+			// Service Unavailable
+			LoggerUtil.error(e.getMessage(), e);
+		}
+		catch (SDKException e) {
+
+			// SDK error
+			LoggerUtil.error(e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+	}
+	
+	@Test(expectedExceptions = PayUException.class)
+	public void findSubscriptionsBySourceIdReturnsNothing() throws Exception {
+		
+		Thread.currentThread().setName("findSubscriptionsBySourceId");
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put(PayU.PARAMETERS.SOURCE_ID, "300777999");
+		
+		try {
+			List<Subscription> subscriptions = PayUSubscription.findList(parameters);
+			LoggerUtil.info(RESPONSE_LOG_MESSAGE, subscriptions);
+			
+			Assert.fail("Has results");
+		}
+		catch (ConnectionException e) {
+			
+			// Service Unavailable
+			LoggerUtil.error(e.getMessage(), e);
+		}
+		catch (InvalidParametersException e) {
+			
+			// Different error
+			LoggerUtil.error(e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+	}
+	
 	@AfterTest
 	public void deleteCustomer() {
 
@@ -1860,9 +1990,5 @@ public class BankAccountApiIntegrationTest {
 			Assert.fail(e.getMessage());
 		}
 	}
-
-
-
-
-
+	
 }
