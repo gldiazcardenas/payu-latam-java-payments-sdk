@@ -46,6 +46,7 @@ import com.payu.sdk.paymentplan.model.Customer;
 import com.payu.sdk.paymentplan.model.PaymentPlanCreditCard;
 import com.payu.sdk.paymentplan.model.RecurringBill;
 import com.payu.sdk.paymentplan.model.RecurringBillItem;
+import com.payu.sdk.paymentplan.model.RecurringBillPaymentRetry;
 import com.payu.sdk.paymentplan.model.Subscription;
 import com.payu.sdk.paymentplan.model.SubscriptionPlan;
 import com.payu.sdk.payments.model.BankAccountListRequest;
@@ -913,6 +914,26 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 
 		request.setMap(paramsFilter);
 		setAuthenticationCredentials(parameters, request);
+
+		return request;
+	}
+	
+	/**
+	 * Builds a recurring bill payment retry request
+	 *
+	 * @param parameters The parameters to be sent to the server
+	 * @return The complete recurring bill payment retry request
+	 * @throws InvalidParametersException
+	 * @throws PayUException
+	 */
+	public static Request buildRecurringBillPaymentRetryRequest(
+			Map<String, String> parameters) throws InvalidParametersException, PayUException {
+
+		String recurringBillId = getParameter(parameters, PayU.PARAMETERS.RECURRING_BILL_ID);
+
+		RecurringBillPaymentRetry request = new RecurringBillPaymentRetry();
+		setAuthenticationCredentials(parameters, request);
+		request.setRecurringBillId(recurringBillId);
 
 		return request;
 	}
