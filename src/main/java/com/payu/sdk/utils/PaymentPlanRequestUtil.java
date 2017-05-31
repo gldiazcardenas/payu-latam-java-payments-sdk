@@ -928,7 +928,7 @@ public final class PaymentPlanRequestUtil extends CommonRequestUtil {
 		String recurringBillId = getParameter(parameters, PayU.PARAMETERS.RECURRING_BILL_ID);
 
 		RecurringBillPaymentRetry request = new RecurringBillPaymentRetry();
-		setAuthenticationCredentials(parameters, request);
+		RequestUtil.setAuthenticationCredentials(parameters, request);
 		request.setRecurringBillId(recurringBillId);
 
 		return request;
