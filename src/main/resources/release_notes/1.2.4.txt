@@ -1,0 +1,6 @@
+2017-06-22
+----------
+* Se agrega método para reintento de pagos recurrentes
+
+Issue:
+https://pagosonline.jira.com/browse/PAGOSONLINEPPS-38817
