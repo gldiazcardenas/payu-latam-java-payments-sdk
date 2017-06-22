@@ -91,4 +91,25 @@ public class PayURecurringBill extends PayU {
 
 		return RecurringBillListResponse.fromXml(xml).getRecurringBills();
 	}
+	
+	/**
+	 * Attempts to retry the last failed payment on a recurring bill
+	 *
+	 * @param parameters
+	 *            The parameters to be sent to the server
+	 * @throws PayUException
+	 * @throws InvalidParametersException
+	 * @throws ConnectionException
+	 */
+	public static void retryRecurringBillPayment(Map<String, String> parameters)
+			throws PayUException, InvalidParametersException, ConnectionException {
+
+		String[] requiredParams = { PayU.PARAMETERS.RECURRING_BILL_ID };
+
+		PaymentPlanRequestUtil.validateParameters(parameters, requiredParams);
+
+		HttpClientHelper.sendRequest(PaymentPlanRequestUtil.buildRecurringBillPaymentRetryRequest(parameters),
+				RequestMethod.POST);
+
+	}
 }

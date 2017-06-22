@@ -143,5 +143,10 @@ public interface Resources {
 	 * Bank accounts item URI
 	 */
 	String URI_BANK_ACCOUNTS = "bankAccounts";
+	
+	/**
+	 * Recurring bill payment retry
+	 */
+	String URI_RECURRING_BILL_PAYMENT_RETRY = "paymentRetry";
 
 }
