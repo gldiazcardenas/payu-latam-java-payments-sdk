@@ -35,6 +35,10 @@ public enum TransactionSource {
 	/**
 	 * The default transaction source in the PayU SDK.
 	 */
-	PAYU_SDK;
+	PAYU_SDK,
+	/**
+	 * Oracle Commerce Cloud Service API
+	 */
+	OCCS_API;
 
 }
