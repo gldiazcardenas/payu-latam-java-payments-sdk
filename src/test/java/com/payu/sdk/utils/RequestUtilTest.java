@@ -65,6 +65,7 @@ public class RequestUtilTest {
 	 */
 	@BeforeMethod
 	public void before() {
+		PayU.merchantId = null;
 		PayU.apiKey = null;
 		PayU.apiLogin = null;
 		PayU.language = null;
