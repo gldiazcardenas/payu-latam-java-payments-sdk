@@ -37,6 +37,11 @@ public enum ExtraParemeterNames {
 	 */
 	INSTALLMENTS_NUMBER,
 
+        /**
+         * Promotion ID value
+         */
+        PROMOTION_ID,
+        
 	/**
 	 * PSE Reference Number
 	 */

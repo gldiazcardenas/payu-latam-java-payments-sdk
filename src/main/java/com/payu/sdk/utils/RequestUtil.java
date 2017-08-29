@@ -932,6 +932,9 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		Integer installments = getIntegerParameter(parameters,
 				PayU.PARAMETERS.INSTALLMENTS_NUMBER);
+                
+                Integer promotionId = getIntegerParameter(parameters,
+				PayU.PARAMETERS.PROMOTION_ID);
 
 		// TAX_VALUE
 		BigDecimal taxValue = getBigDecimalParameter(parameters,
@@ -1069,6 +1072,12 @@ public final class RequestUtil extends CommonRequestUtil {
 						Constants.DEFAULT_DATE_FORMAT);
 				transaction.setExpirationDate(expDate);
 			}
+                        
+                        if (promotionId != null){
+                            	transaction.addExtraParameter(
+                                    ExtraParemeterNames.PROMOTION_ID.name(),
+                                    promotionId.toString());
+                        }
 
 			transaction.setCreditCardTokenId(tokenId);
 			//Set the param of Payment Method
