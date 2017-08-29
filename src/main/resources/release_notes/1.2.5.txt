@@ -8,3 +8,10 @@
 
 Issue:
 https://pagosonline.jira.com/browse/IOCC-49
+
+2017-08-29
+----------
+* PFM-336 Ajustar payu-latam-java-payments-sdk para enviar tag de promociones
+
+Issue:
+https://pagosonline.jira.com/browse/PFM-336
