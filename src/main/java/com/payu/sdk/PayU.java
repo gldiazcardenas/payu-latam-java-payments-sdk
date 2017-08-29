@@ -133,6 +133,8 @@ public abstract class PayU {
 
 		/** The number of installments on the purchase. */
 		String INSTALLMENTS_NUMBER = "installmentsNumber";
+                /** The Promotion id number **/
+                String PROMOTION_ID = "promotionId";
 		/** The number on the credit card. */
 		String CREDIT_CARD_NUMBER = "creditCardNumber";
 		/** The credit card's expiration date. */
