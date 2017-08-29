@@ -117,6 +117,8 @@ public abstract class PayU {
 		String SIGNATURE = "signature";
 		/** The transaction identifier. */
 		String TRANSACTION_ID = "transactionId";
+		/** The transaction source */
+		String TRANSACTION_SOURCE = "transactionSource";
 		/** The credit card token id. */
 		String TOKEN_ID = "tokenId";
 		/** the batch token id. */

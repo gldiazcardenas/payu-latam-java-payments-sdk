@@ -120,6 +120,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		PaymentRequest request = buildDefaultPaymentRequest();
 		request.setCommand(Command.PING);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 		return request;
 
 	}
@@ -145,6 +146,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.PING);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 		return request;
 
 	}
@@ -187,6 +189,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		setAuthenticationByParameter(parameters, request);
 		
 		request.setTransaction(buildTransaction(parameters, transactionType));
+		setLanguageByParameter(parameters, request);
 
 		return request;
 	}
@@ -216,6 +219,62 @@ public final class RequestUtil extends CommonRequestUtil {
 	}
 
 	/**
+	 * Sets the language of the request if there is a parameter {@link PayU.PARAMETERS#LANGUAGE} present in
+	 * the parameters. If the parameter is present but it is not valid a warning is logged indicating that the
+	 * language will be obtained from {@link PayU#language}
+	 *
+	 * @param parameters the parameters
+	 * @param request    the request
+	 */
+	private static void setLanguageByParameter(Map<String, String> parameters, CommandRequest request) {
+
+		try {
+			Language language = getEnumValueParameter(Language.class, parameters, PayU.PARAMETERS.LANGUAGE);
+			if (language != null) {
+				request.setLanguage(language);
+			}
+		}
+		catch (InvalidParametersException e) {
+			LoggerUtil.warning("The parameter {0} is invalid. The language will be obtained from PayU.language.",
+					PayU.PARAMETERS.LANGUAGE);
+		}
+	}
+
+	/**
+	 * Sets the language of the request and the order if there is a parameter {@link PayU.PARAMETERS#LANGUAGE} present in
+	 * the parameters. If the parameter is present but it is not valid a warning is logged indicating that the
+	 * language will be obtained from {@link PayU#language}
+	 *
+	 * @param parameters the parameters
+	 * @param request    the request
+	 */
+	private static void setLanguageByParameter(Map<String, String> parameters, PaymentRequest request) {
+
+		try {
+			Language language = getEnumValueParameter(Language.class, parameters, PayU.PARAMETERS.LANGUAGE);
+			if (language != null) {
+				request.setLanguage(language);
+
+				Transaction transaction = request.getTransaction();
+				if (transaction == null) {
+					return;
+				}
+
+				Order order = transaction.getOrder();
+				if (order == null) {
+					return;
+				}
+
+				order.setLanguage(language);
+			}
+		}
+		catch (InvalidParametersException e) {
+			LoggerUtil.warning("The parameter {0} is invalid. The language will be obtained from PayU.language.",
+					PayU.PARAMETERS.LANGUAGE);
+		}
+	}
+
+	/**
 	 * Builds the payment method list request
 	 *
 	 * @return The complete payment methods list request
@@ -237,6 +296,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		PaymentRequest request = buildDefaultPaymentRequest();
 		request.setCommand(Command.GET_PAYMENT_METHODS);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		return request;
 	}
@@ -286,6 +346,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.ORDER_DETAIL);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 		
 		Integer orderId = getIntegerParameter(parameters,
 				PayU.PARAMETERS.ORDER_ID);
@@ -311,6 +372,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.ORDER_DETAIL_BY_REFERENCE_CODE);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		request.setDetails(new HashMap<String, Object>(parameters));
 
@@ -330,6 +392,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		ReportingRequest request = buildDefaultReportingRequest();
 		request.setCommand(Command.TRANSACTION_RESPONSE_DETAIL);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		request.setDetails(new HashMap<String, Object>(parameters));
 
@@ -368,6 +431,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		request = (CreditCardTokenRequest) buildDefaultRequest(request);
 		request.setCommand(Command.CREATE_TOKEN);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		request.setCreditCardToken(buildCreditCardToken(nameOnCard, payerId,
 				dni, paymentMethod, creditCardNumber, expirationDate));
@@ -404,6 +468,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		request = (CreditCardTokenListRequest) buildDefaultRequest(request);
 		request.setCommand(Command.GET_TOKENS);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		CreditCardTokenInformation information = new CreditCardTokenInformation();
 
@@ -435,6 +500,7 @@ public final class RequestUtil extends CommonRequestUtil {
 		request = (RemoveCreditCardTokenRequest) buildDefaultRequest(request);
 		request.setCommand(Command.REMOVE_TOKEN);
 		setAuthenticationByParameter(parameters, request);
+		setLanguageByParameter(parameters, request);
 
 		RemoveCreditCardToken remove = new RemoveCreditCardToken();
 
@@ -920,6 +986,14 @@ public final class RequestUtil extends CommonRequestUtil {
 		Integer platformId = getIntegerParameter(parameters, PayU.PARAMETERS.PLATFORM_ID);
 		transaction.setPlatformId(platformId);
 
+		TransactionSource transactionSource = getEnumValueParameter(TransactionSource.class,
+				parameters,
+				PayU.PARAMETERS.TRANSACTION_SOURCE);
+		if (transactionSource == null) {
+			transactionSource = TransactionSource.PAYU_SDK;
+		}
+		transaction.setSource(transactionSource);
+
 		if (TransactionType.AUTHORIZATION_AND_CAPTURE.equals(transactionType)
 				|| TransactionType.AUTHORIZATION.equals(transactionType)) {
 
@@ -974,7 +1048,6 @@ public final class RequestUtil extends CommonRequestUtil {
 				addPSEExtraParameters(transaction, parameters);
 			}
 
-			transaction.setSource(TransactionSource.PAYU_SDK);
 
 			if (creditCardNumber != null || tokenId != null) {
 				

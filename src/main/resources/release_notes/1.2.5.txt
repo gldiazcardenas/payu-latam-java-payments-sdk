@@ -1,0 +1,10 @@
+2017-08-15
+----------
+* IOCC-49 Ajustar payu-latam-java-payments-sdk para OCCS
+  * Crear TransactionSource.OCCS_API.
+  * Crear nuevo parámetro PayU.PARAMETERS.TRANSACTION_SOURCE.
+  * Usar PayU.PARAMETERS.LANGUAGE para establecer el idioma de la petición
+    y la orden.
+
+Issue:
+https://pagosonline.jira.com/browse/IOCC-49
