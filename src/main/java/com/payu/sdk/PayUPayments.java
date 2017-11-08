@@ -361,6 +361,23 @@ public final class PayUPayments extends PayU {
 
 		return processTransaction(parameters, TransactionType.REFUND);
 	}
+	
+	/**
+	 * Do refund with request headers.
+	 *
+	 * @param parameters the parameters
+	 * @param headers the headers
+	 * @return the transaction response
+	 * @throws PayUException the pay U exception
+	 * @throws InvalidParametersException the invalid parameters exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static TransactionResponse doRefundWithRequestHeaders(Map<String, String> parameters,
+			Map<String, String> headers)
+			throws PayUException, InvalidParametersException, ConnectionException {
+
+		return processTransactionWithRequestHeaders(parameters, headers, TransactionType.REFUND);
+	}
 
 	/**
 	 * Do a partial refund transaction
@@ -377,6 +394,24 @@ public final class PayUPayments extends PayU {
 			ConnectionException {
 
 		return processTransaction(parameters, TransactionType.PARTIAL_REFUND);
+	}
+	
+	/**
+	 * Do partial refund with request headers.
+	 *
+	 * @param parameters the parameters
+	 * @param headers the headers
+	 * @return the transaction response
+	 * @throws PayUException the pay U exception
+	 * @throws InvalidParametersException the invalid parameters exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static TransactionResponse doPartialRefundWithRequestHeaders(
+			Map<String, String> parameters, Map<String, String> headers)
+			throws PayUException, InvalidParametersException, ConnectionException {
+
+		return processTransactionWithRequestHeaders(parameters, headers,
+				TransactionType.PARTIAL_REFUND);
 	}
 	
 	/**
@@ -645,6 +680,36 @@ public final class PayUPayments extends PayU {
 
 		String res = HttpClientHelper.sendRequest(
 				RequestUtil.buildPaymentRequest(parameters, transactionType),
+				RequestMethod.POST);
+
+		PaymentResponse response = PaymentResponse.fromXml(res);
+
+		return response.getTransactionResponse();
+	}
+	
+	/**
+	 * Process transaction with request headers.
+	 *
+	 * @param parameters the parameters
+	 * @param headers the headers
+	 * @param transactionType the transaction type
+	 * @return the transaction response
+	 * @throws PayUException the pay U exception
+	 * @throws InvalidParametersException the invalid parameters exception
+	 * @throws ConnectionException the connection exception
+	 */
+	private static TransactionResponse processTransactionWithRequestHeaders(
+			Map<String, String> parameters, Map<String, String> headers, TransactionType transactionType)
+			throws PayUException, InvalidParametersException,
+			ConnectionException {
+
+		String[] required = new String[] { PayU.PARAMETERS.ORDER_ID,
+				PayU.PARAMETERS.TRANSACTION_ID };
+
+		RequestUtil.validateParameters(parameters, required);
+
+		String res = HttpClientHelper.sendRequestWithExtraHeaders(
+				RequestUtil.buildPaymentRequest(parameters, transactionType), headers,
 				RequestMethod.POST);
 
 		PaymentResponse response = PaymentResponse.fromXml(res);

@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -108,6 +109,22 @@ public final class HttpClientHelper {
 
 		return sendRequest(request, requestMethod, SOCKET_TIMEOUT);
 	}
+	
+	/**
+	 * Send request with extra headers.
+	 *
+	 * @param request the request
+	 * @param headers the headers
+	 * @param requestMethod the request method
+	 * @return the string
+	 * @throws PayUException the pay U exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static String sendRequestWithExtraHeaders(Request request, Map<String, String> headers,
+			RequestMethod requestMethod) throws PayUException, ConnectionException {
+
+		return sendRequest(request, headers, requestMethod, SOCKET_TIMEOUT);
+	}
 
 
 	/**
@@ -133,6 +150,63 @@ public final class HttpClientHelper {
 		try {
 
 			HttpRequestBase httpRequest = createHttpRequest(request, requestMethod);
+
+			HttpResponse httpResponse = httpClient.execute(httpRequest);
+
+			if (httpResponse == null) {
+				throw new ConnectionException("No response from server");
+			}
+
+			Integer httpStatus = httpResponse.getStatusLine().getStatusCode();
+
+			Integer[] successStatus = { HttpStatus.SC_OK, HttpStatus.SC_CREATED,
+					HttpStatus.SC_ACCEPTED };
+
+			if (Arrays.asList(successStatus).contains(httpStatus)) {
+
+				return getXmlResponse(httpResponse);
+			}
+			else {
+				return manageResponse(httpResponse);
+			}
+
+		}
+		catch (PayUException e) {
+			throw e;
+		}
+		catch (Exception e) {
+			throw new ConnectionException(e.getMessage(), e);
+		}
+		finally {
+			httpClient.getConnectionManager().shutdown();
+		}
+	}
+	
+	/**
+	 * Send request.
+	 *
+	 * @param request the request
+	 * @param headers the headers
+	 * @param requestMethod the request method
+	 * @param socketTimeOut the socket time out
+	 * @return the string
+	 * @throws PayUException the pay U exception
+	 * @throws ConnectionException the connection exception
+	 */
+	public static String sendRequest(Request request, Map<String, String> headers,
+			RequestMethod requestMethod, Integer socketTimeOut)
+			throws PayUException, ConnectionException {
+
+		HttpClient httpClient = new DefaultHttpClient();
+		setHttpClientParameters(httpClient.getParams(), socketTimeOut);
+
+		httpClient = doModifySSLOptions(request, requestMethod, httpClient);
+
+		try {
+
+			HttpRequestBase httpRequest = createHttpRequest(request, requestMethod);
+			
+			addRequestExtraHeaders(httpRequest, headers);
 
 			HttpResponse httpResponse = httpClient.execute(httpRequest);
 
@@ -392,6 +466,27 @@ public final class HttpClientHelper {
 
 		requestBase.addHeader(BasicScheme.authenticate(credentials,
 				Constants.DEFAULT_ENCODING, false));
+	}
+	
+	/**
+	 * Adds the request extra headers.
+	 *
+	 * @param httpRequest the http request
+	 * @param headers the headers
+	 * @throws ConnectionException 
+	 */
+	private static void addRequestExtraHeaders(HttpRequestBase httpRequest,
+			Map<String, String> headers) throws ConnectionException {
+
+		try {
+			for (Map.Entry<String, String> entry : headers.entrySet()) {
+				httpRequest.setHeader(entry.getKey(), entry.getValue());
+			}
+		}
+		catch (Exception e) {
+			throw new ConnectionException(
+					"Exception caught when adding the extra headers to be sent", e);
+		}
 	}
 
 	/**
