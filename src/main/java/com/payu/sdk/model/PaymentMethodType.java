@@ -45,7 +45,17 @@ public enum PaymentMethodType {
 	/**
 	 * Cash Payment
 	 */
-	CASH(7, "CASH"),
+	CASH(7, "CASH", Boolean.TRUE),
+	
+	/**
+	 * Cash on Delivery Payment
+	 */
+	CASH_ON_DELIVERY(11, "CASH_ON_DELIVERY", Boolean.TRUE),
+	
+	/**
+	 * Cash on Delivery Payment
+	 */
+	LENDING(13, "LENDING", Boolean.FALSE),
 
 	/**
 	 * Referenced payment.
@@ -65,7 +75,7 @@ public enum PaymentMethodType {
 	/**
 	 * Payment using ACH.
 	 */
-	ACH(5, "ACH"),
+	ACH(5, "ACH", Boolean.TRUE),
 
 	/**
 	 * Payment using debit card.
@@ -75,7 +85,25 @@ public enum PaymentMethodType {
 	/**
 	 * Payment with Special card.
 	 */
-	SPECIAL_CARD(9, "SPECIAL_CARD");
+	SPECIAL_CARD(9, "SPECIAL_CARD"),
+	
+	/**
+	 * Online referenced payment.
+	 */
+	BANK_REFERENCED(10, "BANK_REFERENCED", Boolean.TRUE),
+
+	/** PayU global network payment type **/
+	PAYU_GLOBAL_PAYMENT(12, "GLOBAL_PAYMENT", Boolean.TRUE),
+
+	/**
+	 * Payment with bank transfer.
+	 */
+	BANK_TRANSFER(14, "BANK_TRANSFER", Boolean.TRUE),
+	
+	/**
+	 * Payment using an external wallet.
+	 */
+	WALLET(15, "WALLET", Boolean.TRUE);
 
 	/**
 	 * The payment method identifier.
@@ -84,6 +112,9 @@ public enum PaymentMethodType {
 
 	/** The payment method description. */
 	private String description;
+	
+	/** The antiFraud skipping flag. */
+	private Boolean antiFraudSkipping;
 
 	/**
 	 * The constructor which receives all the enum data.
@@ -95,6 +126,19 @@ public enum PaymentMethodType {
 		this.id = id;
 		this.description = description;
 	}
+	
+	/**
+	 * The constructor which receives all the enum data.
+	 *
+	 * @param id The payment Method type id.
+	 * @param description The payment Method type description.
+	 * @param antiFraudSkipping The antiFraud skipping flag
+	 */
+	private PaymentMethodType(Integer id, String description, Boolean antiFraudSkipping) {
+		this.id = id;
+		this.description = description;
+		this.antiFraudSkipping = antiFraudSkipping;
+	}
 
 	/**
 	 * Returns the payment method type identifier.
@@ -103,6 +147,16 @@ public enum PaymentMethodType {
 	 */
 	public Integer getId() {
 		return id;
+	}
+	
+	/**
+	 * Returns the antiFraud skipping flag.
+	 *
+	 * @return the antiFraud skipping flag
+	 */
+	public Boolean isAntiFraudSkipping() {
+
+		return antiFraudSkipping;
 	}
 
 	/**

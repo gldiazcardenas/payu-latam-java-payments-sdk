@@ -1,3 +1,12 @@
+2017-11-07
+----------
+* PFM-336 Analisis y actualizacion de SDK:
+	* Medios de pago
+	* Tipos de medio de pago
+
+Issue:
+https://pagosonline.jira.com/browse/PFM-696
+
 2017-11-08
 ----------
 * PAGOSONLINEPPS-40769 Accesos con privilegio para operacion refund en el API
