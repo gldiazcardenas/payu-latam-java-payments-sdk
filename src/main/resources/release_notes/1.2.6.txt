@@ -6,3 +6,11 @@
 
 Issue:
 https://pagosonline.jira.com/browse/PFM-696
+
+2017-11-08
+----------
+* PAGOSONLINEPPS-40769 Accesos con privilegio para operacion refund en el API
+  * Crear y sobrecargar métodos para permitir enviar headers extra en la petición a payments-api.
+
+Issue:
+https://pagosonline.jira.com/browse/PAGOSONLINEPPS-40769
