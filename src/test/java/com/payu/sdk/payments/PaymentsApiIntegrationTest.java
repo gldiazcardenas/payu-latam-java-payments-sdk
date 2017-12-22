@@ -145,7 +145,7 @@ public class PaymentsApiIntegrationTest {
 		PayU.language = Language.en;
 		PayU.isTest = false;
 
-		TestEnvironment environment = TestEnvironment.LOCAL;
+		TestEnvironment environment = TestEnvironment.SANDBOX;
 
 		PayU.paymentsUrl = environment.getPaymentsApiUrl();
 
