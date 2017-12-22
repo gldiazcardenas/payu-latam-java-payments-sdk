@@ -47,6 +47,7 @@ import com.payu.sdk.exceptions.InvalidParametersException;
 import com.payu.sdk.exceptions.PayUException;
 import com.payu.sdk.exceptions.SDKException;
 import com.payu.sdk.model.Bank;
+import com.payu.sdk.model.CreditCard;
 import com.payu.sdk.model.CreditCardToken;
 import com.payu.sdk.model.Currency;
 import com.payu.sdk.model.DocumentType;
@@ -63,6 +64,7 @@ import com.payu.sdk.model.TransactionResponseCode;
 import com.payu.sdk.model.TransactionType;
 import com.payu.sdk.paymentplan.model.SubscriptionPlan;
 import com.payu.sdk.payments.model.CreditCardTokenResponse;
+import com.payu.sdk.payments.model.PaymentAttemptRequest;
 import com.payu.sdk.util.CreditCards;
 import com.payu.sdk.util.TestEnvironment;
 import com.payu.sdk.utils.LoggerUtil;
@@ -143,7 +145,7 @@ public class PaymentsApiIntegrationTest {
 		PayU.language = Language.en;
 		PayU.isTest = false;
 
-		TestEnvironment environment = TestEnvironment.SANDBOX;
+		TestEnvironment environment = TestEnvironment.LOCAL;
 
 		PayU.paymentsUrl = environment.getPaymentsApiUrl();
 
@@ -2223,8 +2225,60 @@ public class PaymentsApiIntegrationTest {
 
 		}
 
-
-
 	}
 
+	/**
+	 * Creates a transaction from payment request sent.
+	 *
+	 * @author <a href="johan.navarrete@payulatam.com">Johan Navarrete</a>
+	 * @throws ConnectionException
+	 * @throws PayUException
+	 * @since 1.2.7
+	 */
+	@Test
+	public void createTransactionFromPaymentRequestTest() throws PayUException, ConnectionException {
+
+		Thread.currentThread().setName("createTransactionFromPaymentRequestTest");
+
+		final PaymentAttemptRequest paymentRequest = new PaymentAttemptRequest(1);
+		final Transaction transaction = new Transaction();
+
+		CreditCards creditCardVisa = CreditCards.VISA;
+		final CreditCard creditCard = new CreditCard();
+		creditCard.setExpirationDate(creditCardVisa.getExpirationDate());
+		creditCard.setNumber(creditCardVisa.getCreditCardNumber());
+		creditCard.setSecurityCode(creditCardVisa.getSecurityCode());
+
+		transaction.setCreditCard(creditCard);
+		transaction.setPaymentMethod("VISA");
+		paymentRequest.setTransaction(transaction);
+
+		final TransactionResponse response = PayUPayments.createTransactionFromPaymentRequest(paymentRequest);
+
+		LoggerUtil.info(RESPONSE_LOG_MESSAGE, response);
+
+		Assert.assertNotNull(response, "Invalid response");
+		Assert.assertNotNull(response.getResponseCode(), "Invalid response code");
+
+		if (TransactionResponseCode.APPROVED.equals(response.getResponseCode())) {
+			Assert.assertNotNull(response.getTransactionId());
+			Assert.assertNotNull(response.getOrderId());
+		}
+	}
+
+	/**
+	 * Creates a transaction from payment request sent, should fail.
+	 *
+	 * @author <a href="johan.navarrete@payulatam.com">Johan Navarrete</a>
+	 * @throws ConnectionException
+	 * @throws PayUException
+	 * @since 1.2.7
+	 */
+	@Test(expectedExceptions = { PayUException.class })
+	public void createTransactionFromPaymentRequestTest_ShouldFail() throws PayUException, ConnectionException {
+
+		Thread.currentThread().setName("createTransactionFromPaymentRequestTest");
+		LoggerUtil.info(RESPONSE_LOG_MESSAGE,
+				PayUPayments.createTransactionFromPaymentRequest(new PaymentAttemptRequest(1)));
+	}
 }

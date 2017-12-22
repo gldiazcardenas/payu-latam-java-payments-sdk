@@ -1,0 +1,6 @@
+2017-12-21
+----------
+* PFM-336: Se expone servicio para convertir intento de pago en transacción.
+
+Issue:
+https://pagosonline.jira.com/browse/PFM-696

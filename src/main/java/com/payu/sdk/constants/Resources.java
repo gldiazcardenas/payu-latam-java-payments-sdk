@@ -148,5 +148,10 @@ public interface Resources {
 	 * Recurring bill payment retry
 	 */
 	String URI_RECURRING_BILL_PAYMENT_RETRY = "paymentRetry";
+	
+	/**
+	 * Payment request URI.
+	 */
+	String URI_PAYMENT_REQUEST = "paymentRequest";
 
 }
