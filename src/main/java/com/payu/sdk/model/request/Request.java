@@ -67,7 +67,7 @@ public abstract class Request implements Serializable {
 	/**
 	 * The URL separator string
 	 */
-	private static final String PATH_SEPARATOR = "/";
+	protected static final String PATH_SEPARATOR = "/";
 
 	/** The generated serial version Id */
 	private static final long serialVersionUID = 404737321362981389L;

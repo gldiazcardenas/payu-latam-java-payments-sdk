@@ -44,6 +44,7 @@ import com.payu.sdk.model.TransactionType;
 import com.payu.sdk.model.request.Command;
 import com.payu.sdk.model.response.ResponseCode;
 import com.payu.sdk.payments.model.BankListResponse;
+import com.payu.sdk.payments.model.PaymentAttemptRequest;
 import com.payu.sdk.payments.model.PaymentMethodListResponse;
 import com.payu.sdk.payments.model.PaymentMethodResponse;
 import com.payu.sdk.payments.model.PaymentRequest;
@@ -715,6 +716,21 @@ public final class PayUPayments extends PayU {
 		PaymentResponse response = PaymentResponse.fromXml(res);
 
 		return response.getTransactionResponse();
+	}
+
+	/**
+	 * Creates a transaction using a payment request.
+	 * 
+	 * @param paymentRequest the payment request to create a transaction.
+	 * @return a transaction response.
+	 * @throws PayUException
+	 * @throws ConnectionException
+	 */
+	public static TransactionResponse createTransactionFromPaymentRequest(final PaymentAttemptRequest paymentRequest)
+			throws PayUException, ConnectionException {
+
+		return PaymentResponse.fromXml(HttpClientHelper.sendRequest(paymentRequest, RequestMethod.POST))
+				.getTransactionResponse();
 	}
 
 }
