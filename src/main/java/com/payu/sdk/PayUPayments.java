@@ -647,6 +647,17 @@ public final class PayUPayments extends PayU {
 						requiredParameters.add(PayU.PARAMETERS.CREDIT_CARD_SECURITY_CODE);
 					}
 					break;
+
+				case BANK_TRANSFER:
+
+						requiredParameters.add(PayU.PARAMETERS.PAYER_NAME);
+						requiredParameters.add(PayU.PARAMETERS.PAYER_STREET);
+						requiredParameters.add(PayU.PARAMETERS.PAYER_STREET_2);
+						requiredParameters.add(PayU.PARAMETERS.PAYER_CITY);
+						requiredParameters.add(PayU.PARAMETERS.PAYER_STATE);
+						requiredParameters.add(PayU.PARAMETERS.PAYER_POSTAL_CODE);
+						break;
+						
 				default:
 					throw new PayUException(ErrorCode.API_ERROR,"Unsupported payment method");
 				}
