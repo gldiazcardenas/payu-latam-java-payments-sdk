@@ -1,0 +1,6 @@
+2018-05-22
+----------
+* IOCC-109: Fix error trying to submit a new transaction on an existing order
+
+Issue:
+https://pagosonline.jira.com/browse/IOCC-109

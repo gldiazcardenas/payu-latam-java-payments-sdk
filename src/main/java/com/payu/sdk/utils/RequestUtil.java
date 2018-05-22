@@ -79,7 +79,7 @@ import com.payu.sdk.reporting.model.ReportingRequest;
  *
  * @author PayU Latam
  * @since 1.0.0
- * @version 1.0.0, 21/08/2013
+ * @version 1.2.9, 22/05/2018
  */
 public final class RequestUtil extends CommonRequestUtil {
 
@@ -1002,39 +1002,36 @@ public final class RequestUtil extends CommonRequestUtil {
 
 			transaction.setPaymentCountry(paymentCountry);
 
-			if (orderId == null) {
+			String signature = getParameter(parameters,
+					PayU.PARAMETERS.SIGNATURE);
+			String merchantId = PayU.merchantId != null ? PayU.merchantId : merchantIdParam;
+			String apiKey = PayU.apiKey != null ? PayU.apiKey : apiKeyParam;
 
-				String signature = getParameter(parameters,
-						PayU.PARAMETERS.SIGNATURE);
-				String merchantId = PayU.merchantId != null ? PayU.merchantId : merchantIdParam;
-				String apiKey = PayU.apiKey != null ? PayU.apiKey : apiKeyParam;
+			Order order = buildOrder(accountId, txCurrency, txValue,
+					taxValue, taxReturnBase, orderDescription,
+					orderReference, orderNotifyUrl);
 
-				Order order = buildOrder(accountId, txCurrency, txValue,
-						taxValue, taxReturnBase, orderDescription,
-						orderReference, orderNotifyUrl);
+			if (signature == null && merchantId != null) {
+				signature = SignatureHelper.buildSignature(order,
+						Integer.parseInt(merchantId), apiKey,
+						SignatureHelper.DECIMAL_FORMAT_3,
+						SignatureHelper.MD5_ALGORITHM);
+			}
 
-				if (signature == null && merchantId != null) {
-					signature = SignatureHelper.buildSignature(order,
-							Integer.parseInt(merchantId), apiKey,
-							SignatureHelper.DECIMAL_FORMAT_3,
-							SignatureHelper.MD5_ALGORITHM);
-				}
+			order.setSignature(signature);
 
-				order.setSignature(signature);
+			// Adds the shipping address
+			AddressV4 shippingAddress = buildShippingAddress(
+					shippingAddressLine1, shippingAddressLine2,
+					shippingAddressLine3, shippingAddressCity,
+					shippingAddressState, shippingAddressCountry,
+					shippingAddressPostalCode, shippingAddressPhone);
+			order.setShippingAddress(shippingAddress);
 
-				// Adds the shipping address
-				AddressV4 shippingAddress = buildShippingAddress(
-						shippingAddressLine1, shippingAddressLine2,
-						shippingAddressLine3, shippingAddressCity,
-						shippingAddressState, shippingAddressCountry,
-						shippingAddressPostalCode, shippingAddressPhone);
-				order.setShippingAddress(shippingAddress);
+			transaction.setOrder(order);
 
-				transaction.setOrder(order);
-			} else {
-				Order order = new Order();
-				order.setId(orderId);
-				transaction.setOrder(order);
+			if (orderId != null ) {
+				transaction.getOrder().setId(orderId);
 			}
 
 			transaction.getOrder().setBuyer(buildBuyer(parameters));
