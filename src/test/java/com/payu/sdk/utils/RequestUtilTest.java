@@ -90,6 +90,9 @@ public class RequestUtilTest {
 		
 		Assert.assertEquals(reportingRequest.getMerchant().getApiKey(), expectedApiKey);
 		Assert.assertEquals(reportingRequest.getMerchant().getApiLogin(), expectedApiLogin);
+		
+		PayU.apiKey = null;
+		PayU.apiLogin = null;
 	}
 	
 	/**
@@ -135,6 +138,9 @@ public class RequestUtilTest {
 		
 		Assert.assertEquals(reportingRequest.getMerchant().getApiKey(), expectedApiKey);
 		Assert.assertEquals(reportingRequest.getMerchant().getApiLogin(), expectedApiLogin);
+		
+		PayU.apiKey = null;
+		PayU.apiLogin = null;
 	}
 
 	@Test(dataProvider = "transactionSources")
