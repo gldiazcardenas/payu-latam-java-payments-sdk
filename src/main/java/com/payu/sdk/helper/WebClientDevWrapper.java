@@ -87,8 +87,8 @@ public final class WebClientDevWrapper {
 
 			ctx.init(null, new TrustManager[] { tm }, null);
 
-			SSLSocketFactory ssf = new SSLSocketFactory(ctx,
-					SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			SSLSocketFactory ssf = new SSLSocketFactory(ctx,new String[]{"TLSv1","TLSv1.1","TLSv1.2"},
+					null,SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
 			ClientConnectionManager ccm = base.getConnectionManager();
 			SchemeRegistry sr = ccm.getSchemeRegistry();
