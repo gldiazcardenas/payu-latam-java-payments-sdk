@@ -1,0 +1,6 @@
+2018-05-31
+----------
+* AR-1017: Add support to TLSv1.2
+
+Issue:
+https://pagosonline.jira.com/browse/AR-1017
