@@ -1,0 +1,6 @@
+2018-06-06
+----------
+* AR-1017: Add support to TLSv1.2 to Production
+
+Issue:
+https://pagosonline.jira.com/browse/AR-1017
