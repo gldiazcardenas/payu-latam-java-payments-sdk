@@ -46,12 +46,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.ssl.SSLContexts;
 
 import com.payu.sdk.PayU;
 import com.payu.sdk.constants.Constants;
@@ -134,7 +137,8 @@ public final class HttpClientHelper {
 	 *            The request to be sent to the server
 	 * @param requestMethod
 	 *            The request method to be sent to the server
-	 * @param the socket time out.
+	 * @param socketTimeOut
+	 * 			  The socket time out.
 	 * @return The response in a xml format
 	 * @throws ConnectionException
 	 * @throws SDKException
@@ -144,7 +148,6 @@ public final class HttpClientHelper {
 
 		HttpClient httpClient = new DefaultHttpClient();
 		setHttpClientParameters(httpClient.getParams(), socketTimeOut);
-		
 		httpClient = doModifySSLOptions(request, requestMethod, httpClient);
 
 		try {
@@ -254,6 +257,8 @@ public final class HttpClientHelper {
 		if(!url.contains(Constants.PAYMENTS_PRD_URL) && !url.contains(Constants.PAYMENTS_SANDBOX_URL) && 
 				!url.contains(Constants.PAYMENTS_STG_URL)){
 			httpClient = WebClientDevWrapper.wrapClient(httpClient);
+		}else{
+			httpClient = buildHttpClient(httpClient);
 		}
 		return httpClient;
 	}
@@ -369,7 +374,7 @@ public final class HttpClientHelper {
 	 *
 	 * @param params
 	 *            The parameters to be set
-	 * @param the socket time out.
+	 * @param socketTimeOut socket time out.
 	 */
 	private static void setHttpClientParameters(HttpParams params, Integer socketTimeOut) {
 
@@ -558,5 +563,21 @@ public final class HttpClientHelper {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * Builds a HttpClient
+	 * @param base The http client to wrap
+	 * @return a {@link HttpClient}
+	 */
+	private static HttpClient buildHttpClient(final HttpClient base) {
+
+		final SSLSocketFactory ssf = new SSLSocketFactory(SSLContexts.createDefault(),
+				new String[] { "TLSv1", "TLSv1.1", "TLSv1.2" }, null, null);
+		base.getConnectionManager()
+				.getSchemeRegistry().register(new Scheme("https", Constants.HTTPS_PORT, ssf));
+
+		return new DefaultHttpClient(base.getConnectionManager(), base.getParams());
+
 	}
 }
