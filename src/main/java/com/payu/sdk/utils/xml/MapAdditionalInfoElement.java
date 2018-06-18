@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author PayU Latam
  * @since 1.3.2
- * @version 1.0.0
+ * @version 1.0.0, 15/06/2018
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "additionalInfo")
