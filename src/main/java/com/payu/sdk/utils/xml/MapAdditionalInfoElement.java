@@ -34,7 +34,7 @@ import java.util.List;
  * Utility to encapsulate additional info tag data.
  *
  * @author PayU Latam
- * @since 1.2.2
+ * @since 1.3.2
  * @version 1.0.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
