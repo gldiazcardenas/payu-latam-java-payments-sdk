@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -43,9 +44,17 @@ public class CreditCard extends AbstractCardData implements Serializable {
 	/** The generated serial version Id */
 	private static final long serialVersionUID = 8390294592569483576L;
 
+	/**The credit card number. */
+	@XmlElement(required=false)
+	private String cardType;
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
 	@Override
 	public CardType getCardType() {
-		return CardType.CREDIT;
+		return CardType.valueOf(cardType);
 	}
 	
 }
