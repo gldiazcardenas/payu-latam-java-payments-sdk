@@ -21,40 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.payu.sdk.model;
-
-import java.io.Serializable;
+package com.payu.sdk.utils.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Represents a credit card in the PayU SDK.
+ * Utility to encapsulate additional info tag data.
  *
  * @author PayU Latam
- * @since 1.0.0
- * @version 1.0.0, 06/09/2013
+ * @since 1.2.2
+ * @version 1.0.0
  */
-@XmlRootElement(name="creditCard")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreditCard extends AbstractCardData implements Serializable {
+@XmlRootElement(name = "additionalInfo")
+public class MapAdditionalInfoElement {
 
-	/** The generated serial version Id */
-	private static final long serialVersionUID = 8390294592569483576L;
-
-	/**The card type */
-	@XmlElement(required=false)
+	/**
+	 * The card type field
+	 */
+	@XmlElement(name = "cardType")
 	private String cardType;
 
+	/**
+	 * Returns the cardType
+	 *
+	 * @return the card type
+	 */
+	public String getCardType() {
+		return cardType;
+	}
+
+	/**
+	 * Sets the list of entries
+	 *
+	 * @param cardType The card type
+	 */
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}
 
-	@Override
-	public CardType getCardType() {
-		return CardType.valueOf(cardType);
-	}
-	
 }
