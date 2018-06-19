@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.payu.sdk.utils.xml.DateAdapter;
+import com.payu.sdk.utils.xml.MapAdditionalInfoAdapter;
 import com.payu.sdk.utils.xml.MapExtraParameterAdapter;
 
 /**
@@ -99,6 +100,11 @@ public class TransactionResponse implements Serializable {
 	/** The extra parameters. */
 	@XmlJavaTypeAdapter(MapExtraParameterAdapter.class)
 	private Map<String, Object> extraParameters;
+
+	/** The addicional info fields */
+        @XmlJavaTypeAdapter(MapAdditionalInfoAdapter.class)
+        private Map<String, String> additionalInfo;
+
 
 	/**
 	 * Returns the order id
@@ -243,6 +249,17 @@ public class TransactionResponse implements Serializable {
 	public Map<String, Object> getExtraParameters() {
 		return extraParameters;
 	}
+
+	/**
+         * Returns the additional info map
+         *
+         * @return the additional info
+         */
+        public Map<String, String> getAdditionalInfo() {
+
+                return additionalInfo;
+        }
+
 
 	/**
 	 * Sets the order id
@@ -405,4 +422,13 @@ public class TransactionResponse implements Serializable {
 		this.extraParameters = extraParameters;
 	}
 
+	/**
+         * Sets the additional info map
+         *
+         * @param additionalInfo the additional info to set
+         */
+        public void setAdditionalInfo(Map<String, String> additionalInfo) {
+
+                this.additionalInfo = additionalInfo;
+        }
 }

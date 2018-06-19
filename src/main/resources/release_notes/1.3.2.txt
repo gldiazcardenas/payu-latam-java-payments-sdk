@@ -1,0 +1,5 @@
+2018-06-18
+----------
+Interpretar el atributo cardType de la tarjeta de crédito en la respuesta de PaymentsAPI/ReportsAPI
+Issue:
+https://pagosonline.jira.com/browse/PAGOSONLINEPPS-42070

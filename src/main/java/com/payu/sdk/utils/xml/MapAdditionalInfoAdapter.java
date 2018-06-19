@@ -21,40 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.payu.sdk.model;
+package com.payu.sdk.utils.xml;
 
-import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Represents a credit card in the PayU SDK.
+ * Utility to adapt additional info into {@link MapAdditionalInfoElement} and
+ * vice versa.
  *
  * @author PayU Latam
- * @since 1.0.0
- * @version 1.0.0, 06/09/2013
+ * @since 1.3.2
+ * @version 1.0.0, 15/06/2018
  */
-@XmlRootElement(name="creditCard")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class CreditCard extends AbstractCardData implements Serializable {
+public class MapAdditionalInfoAdapter extends XmlAdapter<MapAdditionalInfoElement, Map<String, String>> {
 
-	/** The generated serial version Id */
-	private static final long serialVersionUID = 8390294592569483576L;
+	@Override
+	public MapAdditionalInfoElement marshal(Map<String, String> v) throws Exception {
 
-	/**The card type */
-	@XmlElement(required=false)
-	private String cardType;
+		if (v == null || v.isEmpty()) {
+			return null;
+		}
 
-	public void setCardType(String cardType) {
-		this.cardType = cardType;
+		MapAdditionalInfoElement map = new MapAdditionalInfoElement();
+		map.setCardType(v.get("cardType"));
+		return map;
 	}
 
 	@Override
-	public CardType getCardType() {
-		return CardType.valueOf(cardType);
+	public Map<String, String> unmarshal(MapAdditionalInfoElement v) throws Exception {
+
+		if (v == null) {
+			return null;
+		}
+
+		Map<String, String> map = new HashMap<String, String>(1);
+		map.put("cardType", v.getCardType());
+		return map;
 	}
-	
 }
