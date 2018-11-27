@@ -41,6 +41,8 @@ public enum PaymentMethod {
 	VISA(PaymentMethodType.CREDIT_CARD),
 
 	AMEX(PaymentMethodType.CREDIT_CARD),
+	
+	HIPERCARD(PaymentMethodType.CREDIT_CARD),
 
 	DINERS(PaymentMethodType.CREDIT_CARD),
 
