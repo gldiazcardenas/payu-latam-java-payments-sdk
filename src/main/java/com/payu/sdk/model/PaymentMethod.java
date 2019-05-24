@@ -100,7 +100,9 @@ public enum PaymentMethod {
 
 	SANTANDER(PaymentMethodType.REFERENCED),
 
-	SCOTIABANK(PaymentMethodType.REFERENCED);
+	SCOTIABANK(PaymentMethodType.REFERENCED),
+
+	BANK_REFERENCED(PaymentMethodType.BANK_REFERENCED);
 
 	/**
 	 * Default constructor
