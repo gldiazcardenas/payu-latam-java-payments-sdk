@@ -1,0 +1,5 @@
+2019-05-24
+----------
+Añadir metodo de pago BANK_REFERENCED
+Issue:
+https://pagosonline.jira.com/browse/PFM-2255
