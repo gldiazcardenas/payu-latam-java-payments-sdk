@@ -637,7 +637,8 @@ public final class RequestUtil extends CommonRequestUtil {
 	private static void buildCreditCardTransaction(Transaction transaction,
 			String nameOnCard, String creditCardNumber, String expirationDate,
 			Boolean processWithoutCvv2, String securityCode,
-			Integer installments, Boolean createCreditCardToken)
+			Integer installments, Boolean createCreditCardToken,
+			String dmApiMessage, String dmApiSubject, String dmApiUniqueMessageId)
 			throws InvalidParametersException {
 
 		transaction.setCreditCard(buildCreditCard(nameOnCard, creditCardNumber,
@@ -647,6 +648,24 @@ public final class RequestUtil extends CommonRequestUtil {
 			transaction.addExtraParameter(
 					ExtraParemeterNames.INSTALLMENTS_NUMBER.name(),
 					installments.toString());
+		}
+
+		if (dmApiMessage != null) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_MESSAGE.name(),
+					dmApiMessage);
+		}
+
+		if (dmApiSubject != null) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_SUBJECT.name(),
+					dmApiSubject);
+		}
+
+		if (dmApiUniqueMessageId != null) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_UNIQUE_MESSAGE_ID.name(),
+					dmApiUniqueMessageId);
 		}
 
 		transaction.setCreateCreditCardToken(createCreditCardToken);
@@ -959,6 +978,15 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		String tokenId = getParameter(parameters, PayU.PARAMETERS.TOKEN_ID);
 
+		String dmApiSubject = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_SUBJECT);
+
+		String dmApiMessage = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_MESSAGE);
+
+		String dmApiUniqueMessageId = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_UNIQUE_MESSAGE_ID);
+
 		Transaction transaction = new Transaction();
 		transaction.setType(transactionType);
 
@@ -1060,7 +1088,7 @@ public final class RequestUtil extends CommonRequestUtil {
 				buildCreditCardTransaction(transaction, creditCardHolderName,
 						creditCardNumber, creditCardExpirationDate,
 						processWithoutCvv2, securityCode, installments,
-						createCreditCardToken);
+						createCreditCardToken, dmApiMessage, dmApiSubject, dmApiUniqueMessageId);
 			}
 
 			if (expirationDate != null) {

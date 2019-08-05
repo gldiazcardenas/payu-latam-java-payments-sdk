@@ -37,10 +37,10 @@ public enum ExtraParemeterNames {
 	 */
 	INSTALLMENTS_NUMBER,
 
-        /**
-         * Promotion ID value
-         */
-        PROMOTION_ID,
+	/**
+	 * Promotion ID value
+	 */
+	PROMOTION_ID,
         
 	/**
 	 * PSE Reference Number
@@ -90,6 +90,20 @@ public enum ExtraParemeterNames {
 	/**
 	 * 	Generic extra parameter 3
 	 */
-	EXTRA3		
+	EXTRA3,
 
+	/**
+	 * The Dinero Mail api subject field
+	 */
+	DM_API_SUBJECT,
+
+	/**
+	 * The Dinero Mail api message field
+	 */
+	DM_API_MESSAGE,
+
+	/**
+	 * The Dinero Mail api unique message id field
+	 */
+	DM_API_UNIQUE_MESSAGE_ID
 }
