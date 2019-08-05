@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.payu.sdk.PayU;
 import com.payu.sdk.constants.Constants;
 import com.payu.sdk.exceptions.InvalidParametersException;
@@ -650,19 +652,19 @@ public final class RequestUtil extends CommonRequestUtil {
 					installments.toString());
 		}
 
-		if (dmApiMessage != null) {
+		if (StringUtils.isNotEmpty(dmApiMessage)) {
 			transaction.addExtraParameter(
 					ExtraParemeterNames.DM_API_MESSAGE.name(),
 					dmApiMessage);
 		}
 
-		if (dmApiSubject != null) {
+		if (StringUtils.isNotEmpty(dmApiSubject)) {
 			transaction.addExtraParameter(
 					ExtraParemeterNames.DM_API_SUBJECT.name(),
 					dmApiSubject);
 		}
 
-		if (dmApiUniqueMessageId != null) {
+		if (StringUtils.isNotEmpty(dmApiUniqueMessageId)) {
 			transaction.addExtraParameter(
 					ExtraParemeterNames.DM_API_UNIQUE_MESSAGE_ID.name(),
 					dmApiUniqueMessageId);
