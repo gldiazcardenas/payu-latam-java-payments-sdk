@@ -639,8 +639,7 @@ public final class RequestUtil extends CommonRequestUtil {
 	private static void buildCreditCardTransaction(Transaction transaction,
 			String nameOnCard, String creditCardNumber, String expirationDate,
 			Boolean processWithoutCvv2, String securityCode,
-			Integer installments, Boolean createCreditCardToken,
-			String dmApiMessage, String dmApiSubject, String dmApiUniqueMessageId)
+			Integer installments, Boolean createCreditCardToken)
 			throws InvalidParametersException {
 
 		transaction.setCreditCard(buildCreditCard(nameOnCard, creditCardNumber,
@@ -650,24 +649,6 @@ public final class RequestUtil extends CommonRequestUtil {
 			transaction.addExtraParameter(
 					ExtraParemeterNames.INSTALLMENTS_NUMBER.name(),
 					installments.toString());
-		}
-
-		if (StringUtils.isNotEmpty(dmApiMessage)) {
-			transaction.addExtraParameter(
-					ExtraParemeterNames.DM_API_MESSAGE.name(),
-					dmApiMessage);
-		}
-
-		if (StringUtils.isNotEmpty(dmApiSubject)) {
-			transaction.addExtraParameter(
-					ExtraParemeterNames.DM_API_SUBJECT.name(),
-					dmApiSubject);
-		}
-
-		if (StringUtils.isNotEmpty(dmApiUniqueMessageId)) {
-			transaction.addExtraParameter(
-					ExtraParemeterNames.DM_API_UNIQUE_MESSAGE_ID.name(),
-					dmApiUniqueMessageId);
 		}
 
 		transaction.setCreateCreditCardToken(createCreditCardToken);
@@ -980,15 +961,6 @@ public final class RequestUtil extends CommonRequestUtil {
 
 		String tokenId = getParameter(parameters, PayU.PARAMETERS.TOKEN_ID);
 
-		String dmApiSubject = getParameter(parameters,
-				PayU.PARAMETERS.DM_API_SUBJECT);
-
-		String dmApiMessage = getParameter(parameters,
-				PayU.PARAMETERS.DM_API_MESSAGE);
-
-		String dmApiUniqueMessageId = getParameter(parameters,
-				PayU.PARAMETERS.DM_API_UNIQUE_MESSAGE_ID);
-
 		Transaction transaction = new Transaction();
 		transaction.setType(transactionType);
 
@@ -1090,7 +1062,7 @@ public final class RequestUtil extends CommonRequestUtil {
 				buildCreditCardTransaction(transaction, creditCardHolderName,
 						creditCardNumber, creditCardExpirationDate,
 						processWithoutCvv2, securityCode, installments,
-						createCreditCardToken, dmApiMessage, dmApiSubject, dmApiUniqueMessageId);
+						createCreditCardToken);
 			}
 
 			if (expirationDate != null) {
@@ -1155,6 +1127,15 @@ public final class RequestUtil extends CommonRequestUtil {
 		String extra1 = getParameter(parameters, PayU.PARAMETERS.EXTRA1);
 		String extra2 = getParameter(parameters, PayU.PARAMETERS.EXTRA2);
 		String extra3 = getParameter(parameters, PayU.PARAMETERS.EXTRA3);
+		String dmApiSubject = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_SUBJECT);
+
+		String dmApiMessage = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_MESSAGE);
+
+		String dmApiUniqueMessageId = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_UNIQUE_MESSAGE_ID);
+
 		
 		if (extra1 != null) {
 			transaction.addExtraParameter(ExtraParemeterNames.EXTRA1.name(), extra1);
@@ -1166,6 +1147,24 @@ public final class RequestUtil extends CommonRequestUtil {
 		
 		if (extra3 != null) {
 			transaction.addExtraParameter(ExtraParemeterNames.EXTRA3.name(), extra3);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiMessage)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_MESSAGE.name(),
+					dmApiMessage);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiSubject)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_SUBJECT.name(),
+					dmApiSubject);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiUniqueMessageId)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_UNIQUE_MESSAGE_ID.name(),
+					dmApiUniqueMessageId);
 		}
 	}
 
