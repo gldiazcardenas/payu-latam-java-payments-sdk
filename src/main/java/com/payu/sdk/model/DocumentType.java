@@ -70,6 +70,9 @@ public enum DocumentType {
 	TI,
 
 	/** Documento CPF para Brasil. */
-	CPF;
+	CPF,
+
+	/** Documento de identidad Argentina */
+	DNI;
 
 }

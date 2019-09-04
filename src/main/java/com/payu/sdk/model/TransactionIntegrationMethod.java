@@ -47,7 +47,12 @@ public enum TransactionIntegrationMethod {
 	/**
 	 * Post bcash API (restful)
 	 */
-	BCASH_API_TX;
+	BCASH_API_TX,
+
+	/**
+	 * Post DM API
+	 */
+	DM_API;
 
 	/**
 	 * Tries to convert the String parameter to a {@link TransactionIntegrationMethod}

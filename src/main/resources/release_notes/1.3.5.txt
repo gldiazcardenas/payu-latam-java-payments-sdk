@@ -1,0 +1,5 @@
+2019-08-05
+----------
+Añadir extraparametros Dinero Mail, tipo de identificación Argentina (DNI) y metodo de integración DM_API
+Issue:
+https://pagosonline.jira.com/browse/S5P-123

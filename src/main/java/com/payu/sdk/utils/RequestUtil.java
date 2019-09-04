@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.payu.sdk.PayU;
 import com.payu.sdk.constants.Constants;
 import com.payu.sdk.exceptions.InvalidParametersException;
@@ -1125,6 +1127,15 @@ public final class RequestUtil extends CommonRequestUtil {
 		String extra1 = getParameter(parameters, PayU.PARAMETERS.EXTRA1);
 		String extra2 = getParameter(parameters, PayU.PARAMETERS.EXTRA2);
 		String extra3 = getParameter(parameters, PayU.PARAMETERS.EXTRA3);
+		String dmApiSubject = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_SUBJECT);
+
+		String dmApiMessage = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_MESSAGE);
+
+		String dmApiUniqueMessageId = getParameter(parameters,
+				PayU.PARAMETERS.DM_API_UNIQUE_MESSAGE_ID);
+
 		
 		if (extra1 != null) {
 			transaction.addExtraParameter(ExtraParemeterNames.EXTRA1.name(), extra1);
@@ -1136,6 +1147,24 @@ public final class RequestUtil extends CommonRequestUtil {
 		
 		if (extra3 != null) {
 			transaction.addExtraParameter(ExtraParemeterNames.EXTRA3.name(), extra3);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiMessage)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_MESSAGE.name(),
+					dmApiMessage);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiSubject)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_SUBJECT.name(),
+					dmApiSubject);
+		}
+
+		if (StringUtils.isNotEmpty(dmApiUniqueMessageId)) {
+			transaction.addExtraParameter(
+					ExtraParemeterNames.DM_API_UNIQUE_MESSAGE_ID.name(),
+					dmApiUniqueMessageId);
 		}
 	}
 
