@@ -37,6 +37,24 @@
 		</sonar.exclusions>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>myMavenRepoOssRead</id>
+			<url>${myMavenRepoOssReadUrl}</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>myMavenRepoOssWrite</id>
+			<url>${myMavenRepoOssWriteUrl}</url>
+		</repository>
+		<snapshotRepository>
+			<id>myMavenRepoOssWrite</id>
+			<url>${myMavenRepoOssWriteUrl}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
